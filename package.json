@@ -8,8 +8,15 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@fortawesome/fontawesome": "^1.1.8",
+    "@fortawesome/fontawesome-free-brands": "^5.0.13",
+    "@fortawesome/fontawesome-free-regular": "^5.0.13",
+    "@fortawesome/fontawesome-free-solid": "^5.0.13",
+    "@fortawesome/fontawesome-svg-core": "^1.2.26",
+    "@fortawesome/vue-fontawesome": "^0.1.9",
     "axios": "^0.19.1",
     "core-js": "^3.4.4",
+    "css-loader": "^3.4.2",
     "element-ui": "^2.4.5",
     "vue": "^2.6.10",
     "vue-router": "^3.1.3"

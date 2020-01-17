@@ -4,12 +4,41 @@
       <div class="avatar_box">
         <img src="../assets/logo.png" alt="">
       </div>
+      <el-form ref="loginFormRef" :model="formLogin" label-width="60px" class="form_box">
+        <el-form-item label="账号">
+          <el-input v-model="formLogin.username" placeholder="请输入账号" disabled prefix-icon="el-icon-search">
+          </el-input>
+        </el-form-item>
+        <el-form-item label="密码">
+          <el-input v-model="formLogin.password" placeholder="请输入密码" show-password
+                    prefix-icon="el-icon-search">
+          </el-input>
+        </el-form-item>
+        <el-form-item class="for_btns">
+          <el-button type="primary" round>登录</el-button>
+          <el-button type="info" round @click="resetLoginInfo">重置</el-button>
+        </el-form-item>
+      </el-form>
     </div>
   </div>
 </template>
 
 <script>
-export default {}
+export default {
+  data() {
+    return {
+      formLogin: {
+        username: 'admin',
+        password: ''
+      }
+    }
+  },
+  methods: {
+    resetLoginInfo() {
+      this.$refs.loginFormRef.resetFields()
+    }
+  }
+}
 </script>
 
 <style lang="less" scoped>
@@ -18,7 +47,7 @@ export default {}
     height: 100%;
 
     .login_box {
-      width: 400px;
+      width: 450px;
       height: 300px;
       background: #fffff7;
       border-radius: 10px;
@@ -47,6 +76,19 @@ export default {}
           height: 100%;
           background: #eee;
           border-radius: 50%;
+        }
+      }
+
+      .form_box {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        padding-right: 20px;
+        box-sizing: border-box;
+
+        .for_btns {
+          display: flex;
+          justify-content: flex-end;
         }
       }
     }
