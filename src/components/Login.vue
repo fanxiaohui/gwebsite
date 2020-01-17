@@ -4,18 +4,17 @@
       <div class="avatar_box">
         <img src="../assets/logo.png" alt="">
       </div>
-      <el-form ref="loginFormRef" :model="formLogin" label-width="60px" class="form_box">
-        <el-form-item label="账号">
-          <el-input v-model="formLogin.username" placeholder="请输入账号" disabled prefix-icon="el-icon-search">
+      <el-form ref="loginFormRef" :model="loginFromData" :rules="loginFromRules" label-width="60px" class="form_box">
+        <el-form-item label="账号" prop="username">
+          <el-input v-model="loginFromData.username" placeholder="请输入账号" disabled prefix-icon="el-icon-user-solid">
           </el-input>
         </el-form-item>
-        <el-form-item label="密码">
-          <el-input v-model="formLogin.password" placeholder="请输入密码" show-password
-                    prefix-icon="el-icon-search">
+        <el-form-item label="密码" prop="password">
+          <el-input v-model="loginFromData.password" placeholder="请输入密码" show-password prefix-icon="el-icon-lock">
           </el-input>
         </el-form-item>
         <el-form-item class="for_btns">
-          <el-button type="primary" round>登录</el-button>
+          <el-button type="primary" round @click="login">登录</el-button>
           <el-button type="info" round @click="resetLoginInfo">重置</el-button>
         </el-form-item>
       </el-form>
@@ -27,15 +26,35 @@
 export default {
   data() {
     return {
-      formLogin: {
+      loginFromData: {
         username: 'admin',
         password: ''
+      },
+      loginFromRules: {
+        username: [
+          { required: true, message: '请输入登录名称', trigger: 'blur' },
+          { min: 5, max: 10, message: '长度在 5 到 15 个字符', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入登录密码', trigger: 'blur' },
+          { min: 5, max: 15, message: '长度在 5 到 15 个字符', trigger: 'blur' }
+        ]
       }
     }
   },
   methods: {
-    resetLoginInfo() {
+    resetLoginInfo: function () {
       this.$refs.loginFormRef.resetFields()
+    },
+    login: function () {
+      this.$refs.loginFormRef.validate(async valid => {
+        if (!valid) {
+          return
+        }
+
+        const ret = await this.$http.post('/login', this.loginFromData)
+        console.log(ret)
+      })
     }
   }
 }
@@ -83,7 +102,7 @@ export default {
         position: absolute;
         bottom: 0;
         width: 100%;
-        padding-right: 20px;
+        padding: 0 30px;
         box-sizing: border-box;
 
         .for_btns {

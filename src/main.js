@@ -1,7 +1,9 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
+// plugin
 import './plugins/element.js'
+import axios from 'axios'
 // icon
 import fontawesome from '@fortawesome/fontawesome'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -13,9 +15,13 @@ import './assets/css/global.css'
 
 Vue.config.productionTip = false
 
+axios.defaults.baseURL = 'http://127.0.0.1/api'
+Vue.prototype.$http = axios
+
 fontawesome.library.add(solid)
 fontawesome.library.add(regular)
 fontawesome.library.add(brands)
+
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 new Vue({
   router,
