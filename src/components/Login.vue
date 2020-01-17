@@ -51,9 +51,14 @@ export default {
         if (!valid) {
           return
         }
-
-        const ret = await this.$http.post('/login', this.loginFromData)
-        console.log(ret)
+        try {
+          const result = await this.$http.post('/login', this.loginFromData)
+          window.sessionStorage.setItem('token', result.data.token)
+          this.$message.success('登录成功!')
+          this.$router.push('/home')
+        } catch (e) {
+          this.$message.error('登录失败!')
+        }
       })
     }
   }
