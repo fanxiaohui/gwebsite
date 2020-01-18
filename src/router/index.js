@@ -6,7 +6,7 @@ import Home from '../components/Home'
 Vue.use(VueRouter)
 
 const routes = [
-  { path: '/', redirect: 'Home' },
+  { path: '/', redirect: '/home' },
   { path: '/login', component: Login },
   { path: '/home', component: Home }
 ]

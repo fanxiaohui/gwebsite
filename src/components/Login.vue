@@ -10,7 +10,8 @@
           </el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input v-model="loginFromData.password" placeholder="请输入密码" show-password prefix-icon="el-icon-lock">
+          <el-input v-model="loginFromData.password" placeholder="请输入密码" show-password prefix-icon="el-icon-lock"
+                    @keyup.enter.native="login">
           </el-input>
         </el-form-item>
         <el-form-item class="form_btns">
@@ -70,51 +71,52 @@ export default {
   .container {
     background: #2b4b6b;
     height: 100%;
+  }
 
-    .login_box {
-      width: 450px;
-      height: 300px;
-      background: #fffff7;
-      border-radius: 10px;
-      // 定位到中间
+  .login_box {
+    width: 450px;
+    height: 300px;
+    background: #fffff7;
+    border-radius: 10px;
+    // 定位到中间
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+
+    .avatar_box {
+      width: 150px;
+      height: 150px;
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: 50%;
+      padding: 10px;
+      box-shadow: 0 0 15px;
+      // 定位
       position: absolute;
       left: 50%;
-      top: 50%;
       transform: translate(-50%, -50%);
 
-      .avatar_box {
-        width: 150px;
-        height: 150px;
-        background: #fff;
-        border: 1px solid #eee;
-        border-radius: 50%;
-        padding: 10px;
-        box-shadow: 0 0 15px;
-        // 定位
-        position: absolute;
-        left: 50%;
-        transform: translate(-50%, -50%);
-
-        img {
-          width: 100%;
-          height: 100%;
-          background: #eee;
-          border-radius: 50%;
-        }
-      }
-
-      .form_input {
-        position: absolute;
-        bottom: 0;
+      > img {
         width: 100%;
-        padding: 0 30px;
-        box-sizing: border-box;
+        height: 100%;
+        background: #eee;
+        border-radius: 50%;
+      }
+    }
 
-        .form_btns {
-          display: flex;
-          justify-content: flex-end;
-        }
+    .form_input {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      padding: 0 30px;
+      box-sizing: border-box;
+
+      .form_btns {
+        display: flex;
+        justify-content: flex-end;
       }
     }
   }
+
 </style>
