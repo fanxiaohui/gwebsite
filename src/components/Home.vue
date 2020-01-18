@@ -5,7 +5,7 @@
         <img src="../assets/logo.png" alt="logo">
         <span>欢迎使用网关</span>
       </div>
-      <el-button type="info" @click="logout">登出</el-button>
+      <el-button type="info" @click="logout">退出</el-button>
     </el-header>
     <el-container>
       <el-aside :width="isCollapse?'65px':'180px'" class="home_aside">
