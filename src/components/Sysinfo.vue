@@ -169,6 +169,10 @@ export default {
 </script>
 
 <style lang="less" scoped>
+  .el-breadcrumb {
+    margin-bottom: 20px;
+  }
+
   .el-row {
     padding-top: 5px;
   }
