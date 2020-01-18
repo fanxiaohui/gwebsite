@@ -6,12 +6,18 @@ import Home from '../components/Home'
 Vue.use(VueRouter)
 
 const routes = [
+  { path: '/', redirect: 'Home' },
   { path: '/login', component: Login },
   { path: '/home', component: Home }
 ]
 
 const router = new VueRouter({
   routes
+})
+
+// 路由守卫
+router.beforeEach((to, from, next) => {
+  (to.path === '/login' || window.sessionStorage.getItem('token')) ? next() : next('login')
 })
 
 export default router

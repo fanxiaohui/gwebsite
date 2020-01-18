@@ -1,8 +1,8 @@
 <template>
   <el-container class="home_container">
     <el-header class="home_header">
-      <div class="logo">
-        <img src="../assets/logo.png" alt="logo" >
+      <div>
+        <img src="../assets/logo.png" alt="logo">
         <span>欢迎使用网关</span>
       </div>
       <el-button type="info">登出</el-button>
@@ -83,14 +83,17 @@ export default {
     align-items: center;
     color: #eee;
     font-size: 20px;
-    .logo {
+
+    > div {
       display: flex;
       align-items: center;
-      img{
+
+      > img {
         width: 60px;
         height: 60px;
       }
-      span{
+
+      > span {
         padding-left: 20px;
       }
     }
