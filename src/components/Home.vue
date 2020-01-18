@@ -10,22 +10,37 @@
     <el-container>
       <el-aside :width="isCollapse?'65px':'180px'" class="home_aside">
         <i class="el-icon-c-scale-to-original collapse_toggle" @click="toggleCollapse"/>
-        <el-menu class="aside_menu" text-color="#fff" background-color="#545c64" active-text-color="#ffd04b" router
-                 :collapse-transition="false" :collapse="isCollapse">
-          <el-menu-item index="/sysinfo"><i class="el-icon-info"/><span slot="title">系统信息</span></el-menu-item>
-          <el-menu-item index="/netsetting"><i class="el-icon-connection"/><span slot="title">网络设置</span></el-menu-item>
-          <el-menu-item index="/portsetting"><i class="el-icon-news"/><span slot="title">串口设置</span></el-menu-item>
-          <el-submenu index="4">
+        <el-menu class="aside_menu" text-color="#fff" background-color="#545c64" active-text-color="#ffd04b"
+                 router unique-opened :collapse-transition="false" :collapse="isCollapse" :default-active="activePath">
+          <el-menu-item index="/sysinfo" @click="setNavState('/sysinfo')">
+            <i class="el-icon-info"/><span slot="title">系统信息</span>
+          </el-menu-item>
+          <el-menu-item index="/netsetting" @click="setNavState('/netsetting')">
+            <i class="el-icon-connection"/><span slot="title">网络设置</span></el-menu-item>
+          <el-menu-item index="/portsetting" @click="setNavState('/portsetting')">
+            <i class="el-icon-news"/><span slot="title">串口设置</span></el-menu-item>
+          <!--  主站模式 start-->
+          <el-submenu index="1">
             <template slot="title"><i class="el-icon-menu"/><span>主站模式</span></template>
-            <el-menu-item index="/modbus"><i class="el-icon-eleme"/><span>所有从站</span></el-menu-item>
-            <el-menu-item index="/modbus/ethernet"><i class="el-icon-link"/><span>以太网</span></el-menu-item>
-            <el-menu-item v-for="port in ports" :key="port" index="'/modbus/' + port">
+            <el-menu-item index="/modbus" @click="setNavState('/modbus')">
+              <i class="el-icon-eleme"/><span>所有从站</span>
+            </el-menu-item>
+            <el-menu-item index="/modbus/ethernet" @click="setNavState('/modbus/ethernet')">
+              <i class="el-icon-link"/><span>以太网</span>
+            </el-menu-item>
+            <el-menu-item v-for="port in ports" :key="port" :index="'/modbus/' + port"
+                          @click="setNavState('/modbus/' + port)">
               <i class="el-icon-postcard"/><span>{{port}}</span>
             </el-menu-item>
           </el-submenu>
-          <el-menu-item index="/slave"><i class="el-icon-coin"/><span slot="title">从站模式</span></el-menu-item>
-          <el-menu-item index="/syssetting"><i class="el-icon-setting"/><span slot="title">系统设置</span></el-menu-item>
-          <el-menu-item index="/syslog"><i class="el-icon-monitor"/><span slot="title">系统日志</span></el-menu-item>
+          <!--  主站模式 end-->
+          <el-menu-item index="/slave" @click="setNavState('/slave')">
+            <i class="el-icon-coin"/><span slot="title">从站模式</span></el-menu-item>
+          <el-menu-item index="/syssetting" @click="setNavState('/syssetting')">
+            <i class="el-icon-setting"/><span slot="title">系统设置</span></el-menu-item>
+          <el-menu-item index="/syslog" @click="setNavState('/syslog')">
+            <i class="el-icon-monitor"/><span slot="title">系统日志</span>
+          </el-menu-item>
         </el-menu>
       </el-aside>
       <el-main class="home_main">
@@ -41,7 +56,8 @@ export default {
   data: function () {
     return {
       isCollapse: false,
-      ports: []
+      ports: [],
+      activePath: ''
     }
   },
   methods: {
@@ -59,10 +75,16 @@ export default {
       } catch (e) {
         console.log(e)
       }
+    },
+    setNavState(activePath) {
+      console.log(activePath)
+      window.sessionStorage.setItem('activePath', activePath)
+      this.activePath = activePath
     }
   },
   created() {
     this.getPortsList()
+    this.activePath = window.sessionStorage.getItem('activePath')
   }
 }
 </script>
@@ -112,6 +134,5 @@ export default {
 
   .home_main {
     background-color: #fff;
-
   }
 </style>
