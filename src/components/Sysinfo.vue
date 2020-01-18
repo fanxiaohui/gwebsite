@@ -1,12 +1,12 @@
 <template>
   <div>
-    日志模块
+    <h1>系统信息</h1>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'syslogs'
+  name: 'sysinfo'
 }
 </script>
 

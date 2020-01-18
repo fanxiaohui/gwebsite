@@ -10,11 +10,11 @@
     <el-container>
       <el-aside :width="isCollapse?'65px':'180px'" class="home_aside">
         <i class="el-icon-c-scale-to-original collapse_toggle" @click="toggleCollapse"/>
-        <el-menu class="aside_menu" text-color="#fff" background-color="#545c64" active-text-color="#ffd04b"
+        <el-menu class="aside_menu" text-color="#fff" background-color="#545c64" active-text-color="#ffd04b" router
                  :collapse-transition="false" :collapse="isCollapse">
-          <el-menu-item index="/sysinfos"><i class="el-icon-info"/><span slot="title">系统信息</span></el-menu-item>
-          <el-menu-item index="/network"><i class="el-icon-connection"/><span slot="title">网络设置</span></el-menu-item>
-          <el-menu-item index="3"><i class="el-icon-news"/><span slot="title">串口设置</span></el-menu-item>
+          <el-menu-item index="/sysinfo"><i class="el-icon-info"/><span slot="title">系统信息</span></el-menu-item>
+          <el-menu-item index="/netsetting"><i class="el-icon-connection"/><span slot="title">网络设置</span></el-menu-item>
+          <el-menu-item index="/portsetting"><i class="el-icon-news"/><span slot="title">串口设置</span></el-menu-item>
           <el-submenu index="4">
             <template slot="title"><i class="el-icon-menu"/><span>主站模式</span></template>
             <el-menu-item index="/modbus"><i class="el-icon-eleme"/><span>所有从站</span></el-menu-item>
@@ -24,11 +24,13 @@
             </el-menu-item>
           </el-submenu>
           <el-menu-item index="/slave"><i class="el-icon-coin"/><span slot="title">从站模式</span></el-menu-item>
-          <el-menu-item index="/setting"><i class="el-icon-setting"/><span slot="title">系统设置</span></el-menu-item>
-          <el-menu-item index="/syslogs"><i class="el-icon-monitor"/><span slot="title">系统日志</span></el-menu-item>
+          <el-menu-item index="/syssetting"><i class="el-icon-setting"/><span slot="title">系统设置</span></el-menu-item>
+          <el-menu-item index="/syslog"><i class="el-icon-monitor"/><span slot="title">系统日志</span></el-menu-item>
         </el-menu>
       </el-aside>
-      <el-main class="home_main">Main</el-main>
+      <el-main class="home_main">
+        <router-view/>
+      </el-main>
     </el-container>
   </el-container>
 </template>
