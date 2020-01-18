@@ -1,12 +1,60 @@
 <template>
   <div>
-    日志模块
+    <el-breadcrumb separator-class="el-icon-arrow-right">
+      <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+      <el-breadcrumb-item>系统日志</el-breadcrumb-item>
+    </el-breadcrumb>
+    <el-card>
+      <div slot="header" class="clearfix">
+        <span>系统日志</span>
+      </div>
+      <el-form ref="form" @submit.native.prevent>
+        <el-form-item class="logs_area">
+          <el-input type="textarea" v-model="logForm.logs" style="height: 600px"/>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="getLogs">刷新</el-button>
+          <el-button type="danger" @click="deleteLogs">删除</el-button>
+        </el-form-item>
+      </el-form>
+    </el-card>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'syslog'
+  name: 'syslog',
+  data: function () {
+    return {
+      logForm: {
+        logs: ''
+      }
+    }
+  },
+  methods: {
+    getLogs: async function () {
+      try {
+        const result = await this.$http.get('/logs')
+        this.logForm.logs = ''
+        result.data.list.forEach((item) => {
+          this.logForm.logs += item + '\t\n'
+        })
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    deleteLogs: async function () {
+      try {
+        await this.$http.post('/syscfg/clearLogs')
+        this.logForm.logs = ''
+      } catch (e) {
+        console.log(e)
+      }
+    }
+  },
+  created() {
+    this.getLogs()
+  }
 }
 </script>
 

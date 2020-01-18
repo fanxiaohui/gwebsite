@@ -16,6 +16,10 @@ body,
     clear: both
 }
 
+.el-breadcrumb {
+    margin-bottom: 20px;
+}
+
 .el-row {
     padding-top: 20px;
 }

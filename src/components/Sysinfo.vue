@@ -146,7 +146,6 @@ export default {
       if (minute > 0) {
         result += minute + '分'
       }
-      console.log(this.runningTime)
       return result + second + '秒'
     }
   },
@@ -169,10 +168,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  .el-breadcrumb {
-    margin-bottom: 20px;
-  }
-
   .el-row {
     padding-top: 5px;
   }
