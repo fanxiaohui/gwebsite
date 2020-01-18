@@ -4,12 +4,15 @@ import router from './router'
 // plugin
 import './plugins/element.js'
 import axios from 'axios'
+
 // icon
+// import fontawesomeCore from '@fortawesome/fontawesome-svg-core'
 // import fontawesome from '@fortawesome/fontawesome'
-// import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-// import solid from '@fortawesome/fontawesome-free-solid'
-// import regular from '@fortawesome/fontawesome-free-regular'
-// import brands from '@fortawesome/fontawesome-free-brands'
+// import { FontAwesomeIcon, FontAwesomeLayers, FontAwesomeLayersText } from '@fortawesome/vue-fontawesome'
+// import fas from '@fortawesome/fontawesome-free-solid'
+// import far from '@fortawesome/fontawesome-free-regular'
+// import fab from '@fortawesome/fontawesome-free-brands'
+
 // user
 import './assets/css/global.css'
 
@@ -22,11 +25,12 @@ axios.interceptors.request.use(config => {
 })
 Vue.prototype.$http = axios
 
-// fontawesome.library.add(solid)
-// fontawesome.library.add(regular)
-// fontawesome.library.add(brands)
+// fontawesomeCore.library.add(fas, far, fab)
 //
 // Vue.component('font-awesome-icon', FontAwesomeIcon)
+// Vue.component('font-awesome-layers', FontAwesomeLayers)
+// Vue.component('font-awesome-layers-text', FontAwesomeLayersText)
+
 new Vue({
   router,
   render: h => h(App)

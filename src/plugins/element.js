@@ -11,8 +11,15 @@ import {
   Main,
   Menu,
   MenuItem,
-  Submenu
-  // Col
+  Submenu,
+  Card,
+  Row,
+  Col,
+  Breadcrumb,
+  BreadcrumbItem,
+  Table,
+  TableColumn,
+  divider
 } from 'element-ui'
 
 Vue.use(Button)
@@ -26,6 +33,13 @@ Vue.use(Main)
 Vue.use(Menu)
 Vue.use(Submenu)
 Vue.use(MenuItem)
-// Vue.use(Col)
+Vue.use(Card)
+Vue.use(Row)
+Vue.use(Col)
+Vue.use(Breadcrumb)
+Vue.use(BreadcrumbItem)
+Vue.use(Table)
+Vue.use(TableColumn)
+Vue.use(divider)
 // 定义提示消息全局件
 Vue.prototype.$message = Message

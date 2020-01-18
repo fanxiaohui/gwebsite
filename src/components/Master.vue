@@ -6,10 +6,10 @@
 
 <script>
 export default {
-  name: 'Master'
+  name: 'master'
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
 
 </style>
