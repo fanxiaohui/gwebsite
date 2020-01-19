@@ -5,6 +5,7 @@ import {
   FormItem,
   Input,
   Message,
+  MessageBox,
   Container,
   Header,
   Aside,
@@ -22,7 +23,8 @@ import {
   divider,
   Switch,
   Select,
-  Option
+  Option,
+  Tooltip
 } from 'element-ui'
 
 Vue.use(Button)
@@ -47,5 +49,8 @@ Vue.use(divider)
 Vue.use(Switch)
 Vue.use(Select)
 Vue.use(Option)
+Vue.use(Tooltip)
+// Vue.use(MessageBox)
 // 定义提示消息全局件
+Vue.prototype.$messageBox = MessageBox
 Vue.prototype.$message = Message

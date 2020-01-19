@@ -85,6 +85,7 @@ export default {
   created() {
     this.getPortsList()
     this.activePath = window.sessionStorage.getItem('activePath')
+    this.isCollapse = document.documentElement.clientWidth <= 768 ? true : this.isCollapse
     // 定义窗口变化通知事件
     var _this = this
     window.onresize = function () {

@@ -6,13 +6,11 @@
       </div>
       <el-form ref="loginFormRef" :model="loginFromData" :rules="loginFromRules" label-width="60px" class="form_input">
         <el-form-item label="账号" prop="username">
-          <el-input v-model="loginFromData.username" placeholder="请输入账号" disabled prefix-icon="el-icon-user-solid">
-          </el-input>
+          <el-input v-model="loginFromData.username" placeholder="请输入账号" disabled prefix-icon="el-icon-user-solid"/>
         </el-form-item>
         <el-form-item label="密码" prop="password">
           <el-input v-model="loginFromData.password" placeholder="请输入密码" show-password prefix-icon="el-icon-lock"
-                    @keyup.enter.native="login">
-          </el-input>
+                    @keyup.enter.native="login"/>
         </el-form-item>
         <el-form-item class="form_btns">
           <el-button type="primary" round @click="login">登录</el-button>
@@ -51,6 +49,7 @@ export default {
       this.$refs.loginFormRef.validate(async valid => {
         if (!valid) {
           this.$message.error('输入不正确,请重新输入!')
+          this.resetLoginInfo()
           return
         }
         try {

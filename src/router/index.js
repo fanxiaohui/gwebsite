@@ -1,16 +1,15 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Err404 from '../components/404'
-import Login from '../components/Login.vue'
-import Home from '../components/Home'
-import Sysinfo from '../components/Sysinfo'
-import Netsetting from '../components/Netsetting'
-import Portsetting from '../components/Portsetting'
-import Master from '../components/Master'
-import Slave from '../components/Slave'
-import Syssetting from '../components/Syssetting'
-import Syslog from '../components/Syslog'
-
+import Err404 from '@/components/404'
+import Login from '@/components/Login.vue'
+import Home from '@/components/Home'
+import Sysinfo from '@/components/Sysinfo'
+import Netsetting from '@/components/Netsetting'
+import Portsetting from '@/components/Portsetting'
+import Master from '@/components/Master'
+import Slave from '@/components/Slave'
+import Syssetting from '@/components/Syssetting'
+import Syslog from '@/components/Syslog'
 
 Vue.use(VueRouter)
 
