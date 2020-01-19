@@ -19,7 +19,9 @@ import {
   BreadcrumbItem,
   Table,
   TableColumn,
-  divider
+  divider,
+  Switch,
+  Option
 } from 'element-ui'
 
 Vue.use(Button)
@@ -41,5 +43,7 @@ Vue.use(BreadcrumbItem)
 Vue.use(Table)
 Vue.use(TableColumn)
 Vue.use(divider)
+Vue.use(Switch)
+Vue.use(Option)
 // 定义提示消息全局件
 Vue.prototype.$message = Message

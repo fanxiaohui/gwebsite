@@ -10,10 +10,10 @@
       </div>
       <el-form ref="form" @submit.native.prevent>
         <el-form-item class="logs_area">
-          <el-input type="textarea" v-model="logForm.logs" style="height: 600px"/>
+          <el-input type="textarea" v-model="logForm.logs" readonly/>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="getLogs">刷新</el-button>
+          <el-button type="primary" @click="refresh">刷新</el-button>
           <el-button type="danger" @click="deleteLogs">删除</el-button>
         </el-form-item>
       </el-form>
@@ -33,6 +33,7 @@ export default {
   },
   methods: {
     getLogs: async function () {
+      let isSuccess = true
       try {
         const result = await this.$http.get('/logs')
         this.logForm.logs = ''
@@ -40,14 +41,21 @@ export default {
           this.logForm.logs += item + '\t\n'
         })
       } catch (e) {
+        isSuccess = false
         console.log(e)
       }
+      return isSuccess
+    },
+    refresh: function () {
+      this.getLogs() ? this.$message.success('刷新成功') : this.$message.error('刷新失败')
     },
     deleteLogs: async function () {
       try {
         await this.$http.post('/syscfg/clearLogs')
         this.logForm.logs = ''
+        this.$message.success('删除成功')
       } catch (e) {
+        this.$message.error('删除失败')
         console.log(e)
       }
     }
