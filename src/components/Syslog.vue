@@ -13,8 +13,8 @@
           <el-input type="textarea" v-model="logForm.logs" readonly/>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="refresh">刷新</el-button>
-          <el-button type="danger" @click="deleteLogs">删除</el-button>
+          <el-button type="primary" round @click="refresh">刷新</el-button>
+          <el-button type="danger" round @click="deleteLogs">删除</el-button>
         </el-form-item>
       </el-form>
     </el-card>

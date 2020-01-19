@@ -56,8 +56,8 @@
             </el-table>
           </template>
           <div class="action_btns">
-            <el-button @click="refresh">刷新</el-button>
-            <el-button type="primary" @click="save">保存</el-button>
+            <el-button round @click="refresh">刷新</el-button>
+            <el-button type="primary" round @click="save">保存</el-button>
           </div>
         </el-col>
       </el-row>

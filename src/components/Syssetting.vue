@@ -11,78 +11,86 @@
         <div slot="header" class="clearfix">
           <span>系统设置</span>
         </div>
-        <el-card>
-          <div slot="header" class="clearfix">
-            <span>重启设备</span>
-          </div>
-          <el-button type="danger" @click="reboot">重启网关</el-button>
-          <el-button type="danger" @click="resoft">重启软件</el-button>
-        </el-card>
-        <el-card>
-          <div slot="header" class="clearfix">
-            <span>恢复出厂设置</span>
-          </div>
-          <el-tooltip class="item" effect="dark" content="本操作 将清空所有数据并设置IP和密码为默认!!!" placement="top-start">
-            <el-button type="danger" @click="factory">恢重出厂设置</el-button>
-          </el-tooltip>
-        </el-card>
-        <el-card>
-          <div slot="header" class="clearfix">
-            <span>修改密码</span>
-          </div>
-          <el-form ref="passwdFormRef" :rules="passwdFromRules" :model="passwdFormData" label-width="100px">
-            <el-form-item label="用户名:" prop="username">
-              <el-input v-model="passwdFormData.username" disabled prefix-icon="el-icon-user-solid"/>
-            </el-form-item>
-            <el-form-item label="原密码:" prop="oldPassword">
-              <el-input v-model="passwdFormData.oldPassword" show-password prefix-icon="el-icon-lock"
-                        @keyup.enter.native="passwd"/>
-            </el-form-item>
-            <el-form-item label="新密码:" prop="newPassword">
-              <el-input v-model="passwdFormData.newPassword" show-password prefix-icon="el-icon-lock"
-                        @keyup.enter.native="passwd"/>
-            </el-form-item>
-            <el-form-item label="确认新密码:" prop="confirmPassword">
-              <el-input v-model="passwdFormData.confirmPassword" show-password prefix-icon="el-icon-lock"
-                        @keyup.enter.native="passwd"/>
-            </el-form-item>
-            <el-form-item class="form_btns">
-              <el-button type="primary" round @click="passwd">保存</el-button>
-              <el-button type="info" round @click="resetPasswdInfo">重置</el-button>
-            </el-form-item>
-          </el-form>
-        </el-card>
-        <el-card>
-          <div slot="header" class="clearfix">
-            <span>授权认证</span>
-          </div>
-          <el-form ref="licenceKeyRef" :rules="licenceKeyRules" :model="warrantFormData" label-width="100px">
-            <el-form-item label="当前状态:">
-              <el-input v-model="warrantFormData.hasWarrant" disabled/>
-            </el-form-item>
-            <el-form-item label="到期日期:">
-              <el-input v-model="warrantFormData.expiryTime" disabled/>
-            </el-form-item>
-            <el-form-item label="原始码:">
-              <el-input v-model="warrantFormData.warrant" disabled/>
-            </el-form-item>
-            <el-form-item label="授权码:" required prop="licenceKey">
-              <el-input v-model="warrantFormData.licenceKey"/>
-            </el-form-item>
-            <el-form-item class="form_btns">
-              <el-button type="primary" round @click="approve">认证</el-button>
-              <el-button type="info" round @click="resetLicenceKey">重置</el-button>
-            </el-form-item>
-          </el-form>
-          <el-form>
-
-          </el-form>
-        </el-card>
-        <el-card>
-          <div slot="header" class="clearfix">
-            <span>固件升级</span>
-          </div>
-        </el-card>
+        <el-row :gutter="20">
+          <!-- 修改密码  -->
+          <el-col :offset="2" :xl="9" :lg="9" :md="20" :sm="20" :xs="20">
+            <el-card shadow="hover">
+              <div slot="header" class="clearfix">
+                <span>修改密码</span>
+              </div>
+              <el-form ref="passwdFormRef" :rules="passwdFromRules" :model="passwdFormData" label-width="100px">
+                <el-form-item label="用户名:" prop="username">
+                  <el-input v-model="passwdFormData.username" disabled prefix-icon="el-icon-user-solid"/>
+                </el-form-item>
+                <el-form-item label="原密码:" prop="oldPassword">
+                  <el-input v-model="passwdFormData.oldPassword" show-password prefix-icon="el-icon-lock"
+                            @keyup.enter.native="passwd"/>
+                </el-form-item>
+                <el-form-item label="新密码:" prop="newPassword">
+                  <el-input v-model="passwdFormData.newPassword" show-password prefix-icon="el-icon-lock"
+                            @keyup.enter.native="passwd"/>
+                </el-form-item>
+                <el-form-item label="确认新密码:" prop="confirmPassword">
+                  <el-input v-model="passwdFormData.confirmPassword" show-password prefix-icon="el-icon-lock"
+                            @keyup.enter.native="passwd"/>
+                </el-form-item>
+                <el-form-item class="form_btns">
+                  <el-button type="primary" round @click="passwd">保存</el-button>
+                  <el-button type="info" round @click="resetPasswdInfo">重置</el-button>
+                </el-form-item>
+              </el-form>
+            </el-card>
+          </el-col>
+          <!-- 授权  -->
+          <el-col :offset="2" :xl="9" :lg="9" :md="20" :sm="20" :xs="20">
+            <el-card shadow="hover">
+              <div slot="header" class="clearfix">
+                <span>授权认证</span>
+              </div>
+              <el-form ref="licenceKeyRef" :rules="licenceKeyRules" :model="warrantFormData" label-width="100px">
+                <el-form-item label="当前状态:">
+                  <el-input v-model="warrantFormData.hasWarrant" readonly/>
+                </el-form-item>
+                <el-form-item label="到期日期:">
+                  <el-input v-model="warrantFormData.expiryTime" readonly/>
+                </el-form-item>
+                <el-form-item label="原始码:">
+                  <el-input v-model="warrantFormData.warrant" readonly/>
+                </el-form-item>
+                <el-form-item label="授权码:" required prop="licenceKey">
+                  <el-input v-model="warrantFormData.licenceKey"/>
+                </el-form-item>
+                <el-form-item class="form_btns">
+                  <el-button type="primary" round @click="approve">认证</el-button>
+                  <el-button type="info" round @click="resetLicenceKey">重置</el-button>
+                </el-form-item>
+              </el-form>
+            </el-card>
+          </el-col>
+        </el-row>
+        <el-row>
+          <!-- 重启恢复出厂  -->
+          <el-col :offset="2" :xl="9" :lg="9" :md="20" :sm="20" :xs="20">
+            <el-card shadow="hover">
+              <div slot="header" class="clearfix">
+                <span>重启设备-恢复出厂设置</span>
+              </div>
+              <el-button type="danger" round @click="reboot">重启网关</el-button>
+              <el-button type="danger" round @click="resoft">重启软件</el-button>
+              <el-tooltip class="item" effect="dark" content="本操作 将清空所有数据并设置IP和密码为默认!!!" placement="top-start">
+                <el-button type="danger" round @click="factory">恢重出厂设置</el-button>
+              </el-tooltip>
+            </el-card>
+          </el-col>
+          <!-- 固件升级  -->
+          <el-col :offset="2" :xl="9" :lg="9" :md="20" :sm="20" :xs="20">
+            <el-card shadow="hover">
+              <div slot="header" class="clearfix">
+                <span>固件升级</span>
+              </div>
+            </el-card>
+          </el-col>
+        </el-row>
       </el-card>
     </div>
   </div>
