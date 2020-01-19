@@ -8,24 +8,25 @@
       <div slot="header" class="clearfix">
         <span>网络设置</span>
       </div>
-      <el-form ref="netFormRef" :model="netForm" :rules="netFormRules" @submit.native.prevent label-width="120px">
+      <el-form ref="netFormRef" :model="netForm" :rules="netFormRules" @submit.native.prevent
+               status-icon label-width="120px">
         <el-form-item prop="auto" label="连接类型">
           <el-switch v-model="netForm.auto"/>
           <strong>{{netForm.auto ? '动态IP': '静态IP'}}</strong>
         </el-form-item>
-        <el-form-item prop="ipAddress" label="IP地址:">
+        <el-form-item prop="ipAddress" v-if="!netForm.auto" label="IP地址:">
           <el-input v-model="netForm.ipAddress"/>
         </el-form-item>
-        <el-form-item prop="netMask" label="子网掩码:">
+        <el-form-item prop="netMask" v-if="!netForm.auto" label="子网掩码:">
           <el-input v-model="netForm.netMask"/>
         </el-form-item>
-        <el-form-item prop="gateway" label="网关地址:">
+        <el-form-item prop="gateway" v-if="!netForm.auto" label="网关地址:">
           <el-input v-model="netForm.gateway"/>
         </el-form-item>
-        <el-form-item prop="primaryDNS" label="首选DNS服务器:">
+        <el-form-item prop="primaryDNS" v-if="!netForm.auto" label="首选DNS服务器:">
           <el-input v-model="netForm.primaryDNS"/>
         </el-form-item>
-        <el-form-item prop="secondaryDNS" label="备选DNS服务器:">
+        <el-form-item prop="secondaryDNS" v-if="!netForm.auto" label="备选DNS服务器:">
           <el-input v-model="netForm.secondaryDNS"/>
         </el-form-item>
         <el-form-item>
