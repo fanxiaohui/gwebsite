@@ -21,6 +21,7 @@ import {
   TableColumn,
   divider,
   Switch,
+  Select,
   Option
 } from 'element-ui'
 
@@ -44,6 +45,7 @@ Vue.use(Table)
 Vue.use(TableColumn)
 Vue.use(divider)
 Vue.use(Switch)
+Vue.use(Select)
 Vue.use(Option)
 // 定义提示消息全局件
 Vue.prototype.$message = Message
