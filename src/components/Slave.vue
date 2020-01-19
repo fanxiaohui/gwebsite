@@ -1,15 +1,156 @@
 <template>
   <div>
-    从机模式
+    <el-breadcrumb separator-class="el-icon-arrow-right">
+      <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+      <el-breadcrumb-item>从机模式</el-breadcrumb-item>
+    </el-breadcrumb>
+    <el-card>
+      <div slot="header" class="clearfix">
+        <span>从机模式</span>
+      </div>
+      <el-row :gutter="20">
+        <el-col :xl="6" :lg="8" :md="10">
+          <el-card>
+            <div slot="header" class="clearfix">
+              <strong>以太网</strong>
+            </div>
+            <el-form ref="interFormRef" :rules="interFromRules" :model="interFormData" label-width="100px">
+              <el-form-item label="协议类型:" prop="username">
+                <template>
+                  <el-select v-model="interFormData.inter" class="interWidth">
+                    <el-option label="MODBUS-TCP" value="mbtcp"/>
+                  </el-select>
+                </template>
+              </el-form-item>
+              <el-form-item label="服务端口:" prop="port">
+                <el-input v-model.number="interFormData.port" class="interWidth"/>
+              </el-form-item>
+              <el-form-item label="从机地址:" prop="slaveID">
+                <el-input v-model.number="interFormData.slaveID" class="interWidth"/>
+              </el-form-item>
+              <el-form-item label="绑定端口:" prop="bindPortName">
+                <template>
+                  <el-select v-model="interFormData.bindPortName" class="interWidth">
+                    <el-option v-for="item in bindInterList" :key="item" :value="item"/>
+                  </el-select>
+                </template>
+              </el-form-item>
+              <el-form-item class="form_btns">
+                <el-button type="primary" round @click="addSlave">添加从机</el-button>
+                <el-button type="info" round @click="hpDocShow">帮助</el-button>
+              </el-form-item>
+            </el-form>
+          </el-card>
+        </el-col>
+        <el-col :xl="18" :lg="16" :md="14">
+          <el-card>
+            <div slot="header" class="clearfix">
+              <strong>采集任务</strong>
+            </div>
+            <template>
+              <el-table :data="nodes">
+                <el-table-column prop="inter" label="接口"/>
+                <el-table-column prop="port" label="端口"/>
+                <el-table-column prop="slaveID" label="从站地址"/>
+                <el-table-column prop="bindPortName" label="绑定接口"/>
+                <el-table-column>
+                  <template slot-scope="scope">
+                    <!--                <el-button @click="handleEdit(scope.row.id)">编辑</el-button>-->
+                    <el-button type="danger" @click="deleteSlave(scope.row)">删除</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </template>
+            <div class="action_btns">
+              <el-button type="danger" round @click="deleteSlave(0)">全部删除</el-button>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
+    </el-card>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'Slave'
+  name: 'Slave',
+  data: function () {
+    return {
+      interFormData: {
+        inter: 'mbtcp',
+        port: 502,
+        slaveID: 1,
+        bindPortName: 'Port1'
+      },
+      bindInterList: [],
+      nodes: [],
+      interFromRules: {
+        port: [
+          { required: true, message: '请输入正确的端口', trigger: 'blur' }
+        ],
+        slaveID: [
+          { required: true, message: '请输入从机地址', trigger: 'blur' }
+          // { min: 0, max: 255, message: '值为1 ~ 255之间', trigger: 'blur' }
+        ]
+      }
+    }
+  },
+  methods: {
+    getSlaves: async function () {
+      try {
+        const result = await this.$http.get('modbus/slave/info')
+        this.bindInterList = result.data.bindInterface
+        this.nodes = result.data.slaveNode
+        console.log(this.nodes)
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    addSlave: function () {
+      this.$refs.interFormRef.validate(async valid => {
+        if (!valid) {
+          this.$message.error('输入不正确,请重新输入!')
+          return
+        }
+        console.log(this.interFormData)
+        try {
+          await this.$http.post('/modbus/slave/add', this.interFormData)
+          this.$message.success('添加成功!')
+          this.getSlaves()
+        } catch (e) {
+          console.log(e)
+          this.$message.error('添加失败!')
+        }
+      })
+    },
+    deleteSlave: async function (id) {
+      if (this.nodes.length === 0) {
+        this.$message.info('没有什么可以删除!!')
+        return
+      }
+      try {
+        await this.$http.post('/modbus/slave/del', { params: { id: id } })
+        this.getSlaves()
+      } catch (e) {
+        this.$message.error('删除失败')
+      }
+    },
+    hpDocShow: function () {
+      console.log('help')
+    }
+  },
+  created() {
+    this.getSlaves()
+  }
 }
 </script>
 
 <style lang="less" scoped>
+  .action_btns {
+    margin-top: 20px;
+  }
 
+  .interWidth {
+    width: 200px;
+  }
 </style>
