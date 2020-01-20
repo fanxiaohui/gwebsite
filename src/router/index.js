@@ -10,6 +10,7 @@ import Master from '@/components/Master'
 import Slave from '@/components/Slave'
 import Syssetting from '@/components/Syssetting'
 import Syslog from '@/components/Syslog'
+import Welcome from '../components/Welcome'
 
 Vue.use(VueRouter)
 
@@ -19,12 +20,13 @@ const routes = [
   {
     path: '/home',
     component: Home,
-    redirect: '/sysinfo',
+    redirect: '/welcome',
     children: [
+      { path: '/welcome', component: Welcome },
       { path: '/sysinfo', component: Sysinfo },
       { path: '/netsetting', component: Netsetting },
       { path: '/portsetting', component: Portsetting },
-      { path: '/modbus/:port', component: Master },
+      { path: '/modbus/:portName', component: Master, props: true },
       { path: '/slave', component: Slave },
       { path: '/syssetting', component: Syssetting },
       { path: '/syslog', component: Syslog }

@@ -22,10 +22,10 @@
           <!--  主站模式 start-->
           <el-submenu index="1">
             <template slot="title"><i class="el-icon-menu"/><span>主站模式</span></template>
-            <el-menu-item index="/modbus" @click="setNavState('/modbus')">
+            <el-menu-item index="/modbus/Any" @click="setNavState('/modbus')">
               <i class="el-icon-eleme"/><span>所有从站</span>
             </el-menu-item>
-            <el-menu-item index="/modbus/ethernet" @click="setNavState('/modbus/ethernet')">
+            <el-menu-item index="/modbus/Ethernet" @click="setNavState('/modbus/Ethernet')">
               <i class="el-icon-link"/><span>以太网</span>
             </el-menu-item>
             <el-menu-item v-for="port in ports" :key="port" :index="'/modbus/' + port"
