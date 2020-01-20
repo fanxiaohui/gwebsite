@@ -26,7 +26,7 @@
       </el-table>
       <div class="action_btns">
         <el-button type="primary" round @click="showProtoDialog">编辑当前协议</el-button>
-        <el-button type="primary" round @click="showDialog">添加从机</el-button>
+        <el-button type="primary" round @click="showGatherDialog">添加从机</el-button>
         <el-button type="danger" round @click="deleteNode(0)">全部删除</el-button>
         <el-button type="info" round @click="hpVisible=true">帮助</el-button>
       </div>
@@ -62,6 +62,124 @@
           <el-button type="info" round @click="hpVisible=true">帮助</el-button>
         </span>
     </el-dialog>
+    <el-dialog :title="tabPath()" :visible.sync="gatherDialogVisible" center width="800px">
+      <el-card>
+
+        <el-row>
+          <el-form ref="gatherFormRef" :model="gatherFormData" label-width="100px" class="gather_box">
+            <!-- coil-->
+            <el-col :span="12">
+              <el-form-item label="是否使能:" prop="hasCoil">
+                <el-switch v-model="gatherFormData.hasCoil" active-color="#13ce66" inactive-color="#ff4949"/>
+                <strong class="netTypeShow">{{gatherFormData.hasCoil ? '已使能': '已失能'}}</strong>
+              </el-form-item>
+              <el-form-item label="功能码:">
+                <el-input value="[1]Read Coils" class="interWidth" disabled/>
+              </el-form-item>
+              <el-form-item label="数据地址:" prop="coilAddress">
+                <el-input type="number" v-model.number="gatherFormData.coilAddress"
+                          :disabled="!gatherFormData.hasCoil" class="interWidth"/>
+              </el-form-item>
+              <el-form-item label="数量:" prop="coilQuantity">
+                <el-input type="number" v-model.number="gatherFormData.coilQuantity"
+                          :disabled="!gatherFormData.hasCoil" class="interWidth"/>
+              </el-form-item>
+              <el-form-item label="虚拟地址:" prop="coilVirtualAddress">
+                <el-input type="number" v-model.number="gatherFormData.coilVirtualAddress"
+                          :disabled="!gatherFormData.hasCoil" class="interWidth"/>
+              </el-form-item>
+              <el-form-item label="扫描周期(ms):" prop="coilScanRate">
+                <el-input type="number" v-model.number="gatherFormData.coilScanRate"
+                          :disabled="!gatherFormData.hasCoil" class="interWidth"/>
+              </el-form-item>
+            </el-col>
+            <!-- discrete -->
+            <el-col :span="12">
+              <el-form-item label="是否使能:" prop="hasDiscrete">
+                <el-switch v-model="gatherFormData.hasDiscrete" active-color="#13ce66" inactive-color="#ff4949"/>
+                <strong class="netTypeShow">{{gatherFormData.hasDiscrete ? '已使能': '已失能'}}</strong>
+              </el-form-item>
+              <el-form-item label="功能码:">
+                <el-input value="[2]Read Discrete Inputs" class="interWidth" disabled/>
+              </el-form-item>
+              <el-form-item label="数据地址:" prop="discreteAddress">
+                <el-input type="number" v-model.number="gatherFormData.discreteAddress"
+                          :disabled="!gatherFormData.hasDiscrete" class="interWidth"/>
+              </el-form-item>
+              <el-form-item label="数量:" prop="discreteQuantity">
+                <el-input type="number" v-model.number="gatherFormData.discreteQuantity"
+                          :disabled="!gatherFormData.hasDiscrete" class="interWidth"/>
+              </el-form-item>
+              <el-form-item label="虚拟地址:" prop="discreteVirtualAddress">
+                <el-input type="number" v-model.number="gatherFormData.discreteVirtualAddress"
+                          :disabled="!gatherFormData.hasDiscrete" class="interWidth"/>
+              </el-form-item>
+              <el-form-item label="扫描周期(ms):" prop="discreteScanRate">
+                <el-input type="number" v-model.number="gatherFormData.discreteScanRate"
+                          :disabled="!gatherFormData.hasDiscrete" class="interWidth"/>
+              </el-form-item>
+            </el-col>
+            <!-- holding register -->
+            <el-col :span="12">
+              <el-form-item label="是否使能:" prop="hasHolding">
+                <el-switch v-model="gatherFormData.hasHolding" active-color="#13ce66" inactive-color="#ff4949"/>
+                <strong class="netTypeShow">{{gatherFormData.hasHolding ? '已使能': '已失能'}}</strong>
+              </el-form-item>
+              <el-form-item label="功能码:">
+                <el-input value="[3]Read Holding Registers" class="interWidth" disabled/>
+              </el-form-item>
+              <el-form-item label="数据地址:" prop="holdingAddress">
+                <el-input type="number" v-model.number="gatherFormData.holdingAddress"
+                          :disabled="!gatherFormData.hasHolding" class="interWidth"/>
+              </el-form-item>
+              <el-form-item label="数量:" prop="holdingQuantity">
+                <el-input type="number" v-model.number="gatherFormData.holdingQuantity"
+                          :disabled="!gatherFormData.hasHolding" class="interWidth"/>
+              </el-form-item>
+              <el-form-item label="虚拟地址:" prop="holdingVirtualAddress">
+                <el-input type="number" v-model.number="gatherFormData.holdingVirtualAddress"
+                          :disabled="!gatherFormData.hasHolding" class="interWidth"/>
+              </el-form-item>
+              <el-form-item label="扫描周期(ms):" prop="holdingScanRate">
+                <el-input type="number" v-model.number="gatherFormData.holdingScanRate"
+                          :disabled="!gatherFormData.hasHolding" class="interWidth"/>
+              </el-form-item>
+            </el-col>
+            <!-- input register -->
+            <el-col :span="12">
+              <el-form-item label="是否使能:" prop="hasInput">
+                <el-switch v-model="gatherFormData.hasInput" active-color="#13ce66" inactive-color="#ff4949"/>
+                <strong class="netTypeShow">{{gatherFormData.hasInput ? '已使能': '已失能'}}</strong>
+              </el-form-item>
+              <el-form-item label="功能码:">
+                <el-input value="[4]Read Input Registers" class="interWidth" disabled/>
+              </el-form-item>
+              <el-form-item label="数据地址:" prop="inputAddress">
+                <el-input type="number" v-model.number="gatherFormData.inputAddress"
+                          :disabled="!gatherFormData.hasInput" class="interWidth"/>
+              </el-form-item>
+              <el-form-item label="数量:" prop="inputQuantity">
+                <el-input type="number" v-model.number="gatherFormData.inputQuantity"
+                          :disabled="!gatherFormData.hasInput" class="interWidth"/>
+              </el-form-item>
+              <el-form-item label="虚拟地址:" prop="inputVirtualAddress">
+                <el-input type="number" v-model.number="gatherFormData.inputVirtualAddress"
+                          :disabled="!gatherFormData.hasInput" class="interWidth"/>
+              </el-form-item>
+              <el-form-item label="扫描周期(ms):" prop="inputScanRate">
+                <el-input type="number" v-model.number="gatherFormData.inputScanRate"
+                          :disabled="!gatherFormData.hasInput" class="interWidth"/>
+              </el-form-item>
+            </el-col>
+          </el-form>
+        </el-row>
+        <div class="gather_btns">
+          <el-button type="primary" round @click="addSlave">确定</el-button>
+          <el-button type="info" round @click="cancelGatherDialog">取消</el-button>
+          <el-button type="info" round @click="hpVisible=true">帮助</el-button>
+        </div>
+      </el-card>
+    </el-dialog>
   </div>
 </template>
 
@@ -80,7 +198,9 @@ export default {
         delayPoll: 0,
         responseTimeout: 1000
       }, // 当前port口配置,仅串口有效
+      gatherFormData: {},
       protoDialogVisible: false,
+      gatherDialogVisible: false,
       hpVisible: false
     }
   },
@@ -98,7 +218,11 @@ export default {
     cancelPortoDialog: function () {
       this.protoDialogVisible = false
     },
-    showDialog: function () {
+    showGatherDialog: function () {
+      this.gatherDialogVisible = true
+    },
+    cancelGatherDialog: function () {
+      this.gatherDialogVisible = false
     },
     doConfirm: async function () {
       let url = '/gather/usart'
@@ -151,5 +275,32 @@ export default {
 <style lang="less" scoped>
   .action_btns {
     margin-top: 20px;
+  }
+
+  .interWidth {
+    width: 200px;
+  }
+
+  .gather_box {
+    strong {
+      padding-left: 20px;
+    }
+
+    .el-row, .el-col {
+      border: 1px solid #eee;
+    }
+
+    .el-col {
+      padding: 10px 15px;
+    }
+
+    .el-form-item {
+      margin-bottom: 5px;
+    }
+  }
+
+  .gather_btns {
+    padding-top: 20px;
+    text-align: end;
   }
 </style>
