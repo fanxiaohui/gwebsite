@@ -155,7 +155,7 @@ export default {
       try {
         await this.$messageBox.confirm(
           message,
-          '提示',
+          '警告',
           { type: 'warning', center: true })
         try {
           // await this.$http.post(url)
@@ -177,7 +177,7 @@ export default {
       try {
         await this.$messageBox.confirm(
           '恢复出厂设置操作,将清除所有数据,并将IP与密码将会恢复至默认? - IP地址重启生效!!!',
-          '提示',
+          '警告',
           { type: 'warning', center: true })
         this.$message.warning('恢复出厂中...')
         try {
