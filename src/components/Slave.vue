@@ -36,10 +36,10 @@
           </template>
         </el-form-item>
         <el-form-item label="服务端口:" prop="port">
-          <el-input v-model.number="interFormData.port" class="interWidth"/>
+          <el-input type="number" v-model.number="interFormData.port" class="interWidth"/>
         </el-form-item>
         <el-form-item label="从机地址:" prop="slaveID">
-          <el-input v-model.number="interFormData.slaveID" class="interWidth"/>
+          <el-input type="number" v-model.number="interFormData.slaveID" class="interWidth"/>
         </el-form-item>
         <el-form-item label="绑定端口:" prop="bindPortName">
           <template>
