@@ -25,7 +25,8 @@ import {
   Select,
   Option,
   Tooltip,
-  Dialog
+  Dialog,
+  Drawer, Alert
 } from 'element-ui'
 
 Vue.use(Button)
@@ -52,7 +53,8 @@ Vue.use(Select)
 Vue.use(Option)
 Vue.use(Tooltip)
 Vue.use(Dialog)
-// Vue.use(MessageBox)
+Vue.use(Drawer)
+Vue.use(Alert)
 // 定义提示消息全局件
 Vue.prototype.$messageBox = MessageBox
 Vue.prototype.$message = Message

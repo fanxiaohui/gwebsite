@@ -23,7 +23,7 @@
       <div class="action_btns">
         <el-button type="primary" round @click="showDialog">添加从机</el-button>
         <el-button type="danger" round @click="deleteSlave(0)">全部删除</el-button>
-        <el-button type="info" round @click="hpDocShow">帮助</el-button>
+        <el-button type="info" round @click="hpVisible=true">帮助</el-button>
       </div>
     </el-card>
     <el-dialog title="以太网" :visible.sync="dialogVisible" center width="400px">
@@ -52,8 +52,18 @@
       <span slot="footer" class="form_btns">
           <el-button type="primary" round @click="addSlave">确定</el-button>
           <el-button type="info" round @click="cancel">取消</el-button>
+          <el-button type="info" round @click="hpVisible=true">帮助</el-button>
         </span>
     </el-dialog>
+    <el-drawer title="帮助" :visible.sync="hpVisible" direction="rtl">
+      <div>
+        <el-alert type="warning" center :closable="false" show-icon title="注意:" description="配置信息需重启才生效"/>
+        <el-alert type="info" :closable="false" description="从站模式跟上位机通讯，是对主站的映射。"/>
+        <el-alert type="info" :closable="false" title="接口：" description="协议及端口"/>
+        <el-alert type="info" :closable="false" title="从站地址：" description="Modbus从站地址"/>
+        <el-alert type="info" :closable="false" title="绑定接口：" description=" 绑定该接口用于转发该接口数据"/>
+      </div>
+    </el-drawer>
   </div>
 </template>
 
@@ -71,6 +81,7 @@ export default {
       bindInterList: [],
       nodes: [],
       dialogVisible: false,
+      hpVisible: false,
       interFromRules: {
         port: [
           { required: true, message: '请输入正确的端口', trigger: 'blur' }
@@ -134,9 +145,6 @@ export default {
       } catch (e) {
         this.$message.info('操作取消!')
       }
-    },
-    hpDocShow: function () {
-      console.log('help')
     }
   },
   created() {
