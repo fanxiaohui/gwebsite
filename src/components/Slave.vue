@@ -96,7 +96,7 @@ export default {
   methods: {
     getSlaves: async function () {
       try {
-        const result = await this.$http.get('/modbus/slave/info')
+        const result = await this.$http.get('/modbus/slaves')
         this.bindInterList = result.data.bindInterface
         this.nodes = result.data.slaveNode
         console.log(this.nodes)
@@ -117,7 +117,7 @@ export default {
           return
         }
         try {
-          await this.$http.post('/modbus/slave/add', this.interFormData)
+          await this.$http.put('/modbus/slaves', this.interFormData)
           this.$message.success('添加成功!')
           this.dialogVisible = false
           this.getSlaves()
@@ -135,7 +135,9 @@ export default {
       try {
         await this.$messageBox.confirm('此操作将删除从机节点,是否确认?', '删除从机节点', { type: 'warning' })
         try {
-          await this.$http.post('/modbus/slave/del', { id: id })
+          await this.$http.delete('/modbus/slaves', {
+            data: { id: id }
+          })
           this.getSlaves()
           this.$message.success('删除成功!')
         } catch (e) {

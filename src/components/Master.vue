@@ -296,7 +296,7 @@ export default {
       this.protoDialogVisible = false
     },
     getNodes: async function () {
-      let url = '/gather/modbus/nodelist' + ((this.portName !== 'Any') ? ('?portName=' + this.portName) : '')
+      let url = '/gather/modbus/node' + ((this.portName !== 'Any') ? ('?portName=' + this.portName) : '')
       try {
         const result = await this.$http.get(url)
         this.nodes = result.data.nodeList
@@ -307,7 +307,7 @@ export default {
     },
     addNode: async function () {
       try {
-        await this.$http.post('/gather/modbus/node/add', this.addSlaveFormData)
+        await this.$http.put('/gather/modbus/node', this.addSlaveFormData)
         this.getNodes()
       } catch (e) {
         console.log(e)
@@ -324,7 +324,7 @@ export default {
         } else {
           del.id = id
         }
-        await this.$http.post('/gather/modbus/node/del', del)
+        await this.$http.delete('/gather/modbus/node', del)
         this.getNodes()
       } catch (e) {
         console.log(e)
