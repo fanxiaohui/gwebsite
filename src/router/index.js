@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Err404 from '@/components/404'
-import Login from '@/components/Login.vue'
+import Login from '@/components/Login'
 import Home from '@/components/Home'
 import Sysinfo from '@/components/Sysinfo'
 import Netsetting from '@/components/Netsetting'
@@ -10,7 +10,7 @@ import Master from '@/components/Master'
 import Slave from '@/components/Slave'
 import Syssetting from '@/components/Syssetting'
 import Syslog from '@/components/Syslog'
-import Welcome from '../components/Welcome'
+import Welcome from '@/components/Welcome'
 
 Vue.use(VueRouter)
 

@@ -11,7 +11,7 @@
       <el-table :data="nodes">
         <el-table-column prop="portName" label="接口"/>
         <el-table-column v-if="portName === 'Ethernet'" prop="ipAddress" label="从站IP"/>
-        <el-table-column prop="port" label="从站地址"/>
+        <el-table-column prop="slaveID" label="从站地址"/>
         <el-table-column prop="slaveID" label="功能码"/>
         <el-table-column prop="coilAddress" label="数据地址"/>
         <el-table-column prop="coilQuantity" label="数量"/>
@@ -26,7 +26,7 @@
       </el-table>
       <div class="action_btns">
         <el-button type="primary" round @click="showProtoDialog">编辑当前协议</el-button>
-        <el-button type="primary" round @click="showGatherDialog">添加从机</el-button>
+        <el-button type="primary" round @click="showAddNodeDialog">添加从机</el-button>
         <el-button type="danger" round @click="deleteNode(0)">全部删除</el-button>
         <el-button type="info" round @click="hpVisible=true">帮助</el-button>
       </div>
@@ -62,120 +62,144 @@
           <el-button type="info" round @click="hpVisible=true">帮助</el-button>
         </span>
     </el-dialog>
-    <el-dialog :title="tabPath()" :visible.sync="gatherDialogVisible" center width="800px">
+    <!-- 添加从机节点 -->
+    <el-dialog :title="tabPath()" :visible.sync="addSlaveDialogVisible" center width="800px">
       <el-card>
-
         <el-row>
-          <el-form ref="gatherFormRef" :model="gatherFormData" label-width="100px" class="gather_box">
+          <el-form ref="gatherFormRef" :model="addSlaveFormData" label-width="100px" class="gather_box">
+            <el-col :span="24">
+              <el-form-item label="协议类型:">
+                <el-input v-if="protoFormData.feature==='mbrtu'" value="MODBUS-RTU" class="interWidth" disabled/>
+                <el-input v-else-if="protoFormData.feature==='mbascii'" value="MODBUS-ASCII" class="interWidth"
+                          disabled/>
+                <el-input v-else-if="protoFormData.feature==='mbtcp'" value="MODBUS-TCP" class="interWidth" disabled/>
+                <el-input v-else value="None" class="interWidth" disabled/>
+              </el-form-item>
+              <el-form-item v-if="portName==='Ethernet'" label="从站IP:">
+                <el-input :value="ipAddrPort" class="interWidth" disabled/>
+              </el-form-item>
+              <el-form-item label="接口:">
+                <el-input :value="portName" class="interWidth" disabled/>
+              </el-form-item>
+              <el-form-item label="命令延时(ms):">
+                <el-input :value="protoFormData.delayPoll" class="interWidth" disabled/>
+              </el-form-item>
+              <el-form-item label="回复超时(ms):">
+                <el-input :value="protoFormData.responseTimeout" class="interWidth" disabled/>
+              </el-form-item>
+              <el-form-item label="从机地址:" prop="slaveID">
+                <el-input v-model="addSlaveFormData.slaveID" class="interWidth"/>
+              </el-form-item>
+            </el-col>
             <!-- coil-->
             <el-col :span="12">
               <el-form-item label="是否使能:" prop="hasCoil">
-                <el-switch v-model="gatherFormData.hasCoil" active-color="#13ce66" inactive-color="#ff4949"/>
-                <strong class="netTypeShow">{{gatherFormData.hasCoil ? '已使能': '已失能'}}</strong>
+                <el-switch v-model="addSlaveFormData.hasCoil" active-color="#13ce66" inactive-color="#ff4949"/>
+                <strong class="netTypeShow">{{addSlaveFormData.hasCoil ? '已使能': '已失能'}}</strong>
               </el-form-item>
               <el-form-item label="功能码:">
                 <el-input value="[1]Read Coils" class="interWidth" disabled/>
               </el-form-item>
               <el-form-item label="数据地址:" prop="coilAddress">
-                <el-input type="number" v-model.number="gatherFormData.coilAddress"
-                          :disabled="!gatherFormData.hasCoil" class="interWidth"/>
+                <el-input type="number" v-model.number="addSlaveFormData.coilAddress"
+                          :disabled="!addSlaveFormData.hasCoil" class="interWidth"/>
               </el-form-item>
               <el-form-item label="数量:" prop="coilQuantity">
-                <el-input type="number" v-model.number="gatherFormData.coilQuantity"
-                          :disabled="!gatherFormData.hasCoil" class="interWidth"/>
+                <el-input type="number" v-model.number="addSlaveFormData.coilQuantity"
+                          :disabled="!addSlaveFormData.hasCoil" class="interWidth"/>
               </el-form-item>
               <el-form-item label="虚拟地址:" prop="coilVirtualAddress">
-                <el-input type="number" v-model.number="gatherFormData.coilVirtualAddress"
-                          :disabled="!gatherFormData.hasCoil" class="interWidth"/>
+                <el-input type="number" v-model.number="addSlaveFormData.coilVirtualAddress"
+                          :disabled="!addSlaveFormData.hasCoil" class="interWidth"/>
               </el-form-item>
               <el-form-item label="扫描周期(ms):" prop="coilScanRate">
-                <el-input type="number" v-model.number="gatherFormData.coilScanRate"
-                          :disabled="!gatherFormData.hasCoil" class="interWidth"/>
+                <el-input type="number" v-model.number="addSlaveFormData.coilScanRate"
+                          :disabled="!addSlaveFormData.hasCoil" class="interWidth"/>
               </el-form-item>
             </el-col>
             <!-- discrete -->
             <el-col :span="12">
               <el-form-item label="是否使能:" prop="hasDiscrete">
-                <el-switch v-model="gatherFormData.hasDiscrete" active-color="#13ce66" inactive-color="#ff4949"/>
-                <strong class="netTypeShow">{{gatherFormData.hasDiscrete ? '已使能': '已失能'}}</strong>
+                <el-switch v-model="addSlaveFormData.hasDiscrete" active-color="#13ce66" inactive-color="#ff4949"/>
+                <strong class="netTypeShow">{{addSlaveFormData.hasDiscrete ? '已使能': '已失能'}}</strong>
               </el-form-item>
               <el-form-item label="功能码:">
                 <el-input value="[2]Read Discrete Inputs" class="interWidth" disabled/>
               </el-form-item>
               <el-form-item label="数据地址:" prop="discreteAddress">
-                <el-input type="number" v-model.number="gatherFormData.discreteAddress"
-                          :disabled="!gatherFormData.hasDiscrete" class="interWidth"/>
+                <el-input type="number" v-model.number="addSlaveFormData.discreteAddress"
+                          :disabled="!addSlaveFormData.hasDiscrete" class="interWidth"/>
               </el-form-item>
               <el-form-item label="数量:" prop="discreteQuantity">
-                <el-input type="number" v-model.number="gatherFormData.discreteQuantity"
-                          :disabled="!gatherFormData.hasDiscrete" class="interWidth"/>
+                <el-input type="number" v-model.number="addSlaveFormData.discreteQuantity"
+                          :disabled="!addSlaveFormData.hasDiscrete" class="interWidth"/>
               </el-form-item>
               <el-form-item label="虚拟地址:" prop="discreteVirtualAddress">
-                <el-input type="number" v-model.number="gatherFormData.discreteVirtualAddress"
-                          :disabled="!gatherFormData.hasDiscrete" class="interWidth"/>
+                <el-input type="number" v-model.number="addSlaveFormData.discreteVirtualAddress"
+                          :disabled="!addSlaveFormData.hasDiscrete" class="interWidth"/>
               </el-form-item>
               <el-form-item label="扫描周期(ms):" prop="discreteScanRate">
-                <el-input type="number" v-model.number="gatherFormData.discreteScanRate"
-                          :disabled="!gatherFormData.hasDiscrete" class="interWidth"/>
+                <el-input type="number" v-model.number="addSlaveFormData.discreteScanRate"
+                          :disabled="!addSlaveFormData.hasDiscrete" class="interWidth"/>
               </el-form-item>
             </el-col>
             <!-- holding register -->
             <el-col :span="12">
               <el-form-item label="是否使能:" prop="hasHolding">
-                <el-switch v-model="gatherFormData.hasHolding" active-color="#13ce66" inactive-color="#ff4949"/>
-                <strong class="netTypeShow">{{gatherFormData.hasHolding ? '已使能': '已失能'}}</strong>
+                <el-switch v-model="addSlaveFormData.hasHolding" active-color="#13ce66" inactive-color="#ff4949"/>
+                <strong class="netTypeShow">{{addSlaveFormData.hasHolding ? '已使能': '已失能'}}</strong>
               </el-form-item>
               <el-form-item label="功能码:">
                 <el-input value="[3]Read Holding Registers" class="interWidth" disabled/>
               </el-form-item>
               <el-form-item label="数据地址:" prop="holdingAddress">
-                <el-input type="number" v-model.number="gatherFormData.holdingAddress"
-                          :disabled="!gatherFormData.hasHolding" class="interWidth"/>
+                <el-input type="number" v-model.number="addSlaveFormData.holdingAddress"
+                          :disabled="!addSlaveFormData.hasHolding" class="interWidth"/>
               </el-form-item>
               <el-form-item label="数量:" prop="holdingQuantity">
-                <el-input type="number" v-model.number="gatherFormData.holdingQuantity"
-                          :disabled="!gatherFormData.hasHolding" class="interWidth"/>
+                <el-input type="number" v-model.number="addSlaveFormData.holdingQuantity"
+                          :disabled="!addSlaveFormData.hasHolding" class="interWidth"/>
               </el-form-item>
               <el-form-item label="虚拟地址:" prop="holdingVirtualAddress">
-                <el-input type="number" v-model.number="gatherFormData.holdingVirtualAddress"
-                          :disabled="!gatherFormData.hasHolding" class="interWidth"/>
+                <el-input type="number" v-model.number="addSlaveFormData.holdingVirtualAddress"
+                          :disabled="!addSlaveFormData.hasHolding" class="interWidth"/>
               </el-form-item>
               <el-form-item label="扫描周期(ms):" prop="holdingScanRate">
-                <el-input type="number" v-model.number="gatherFormData.holdingScanRate"
-                          :disabled="!gatherFormData.hasHolding" class="interWidth"/>
+                <el-input type="number" v-model.number="addSlaveFormData.holdingScanRate"
+                          :disabled="!addSlaveFormData.hasHolding" class="interWidth"/>
               </el-form-item>
             </el-col>
             <!-- input register -->
             <el-col :span="12">
               <el-form-item label="是否使能:" prop="hasInput">
-                <el-switch v-model="gatherFormData.hasInput" active-color="#13ce66" inactive-color="#ff4949"/>
-                <strong class="netTypeShow">{{gatherFormData.hasInput ? '已使能': '已失能'}}</strong>
+                <el-switch v-model="addSlaveFormData.hasInput" active-color="#13ce66" inactive-color="#ff4949"/>
+                <strong class="netTypeShow">{{addSlaveFormData.hasInput ? '已使能': '已失能'}}</strong>
               </el-form-item>
               <el-form-item label="功能码:">
                 <el-input value="[4]Read Input Registers" class="interWidth" disabled/>
               </el-form-item>
               <el-form-item label="数据地址:" prop="inputAddress">
-                <el-input type="number" v-model.number="gatherFormData.inputAddress"
-                          :disabled="!gatherFormData.hasInput" class="interWidth"/>
+                <el-input type="number" v-model.number="addSlaveFormData.inputAddress"
+                          :disabled="!addSlaveFormData.hasInput" class="interWidth"/>
               </el-form-item>
               <el-form-item label="数量:" prop="inputQuantity">
-                <el-input type="number" v-model.number="gatherFormData.inputQuantity"
-                          :disabled="!gatherFormData.hasInput" class="interWidth"/>
+                <el-input type="number" v-model.number="addSlaveFormData.inputQuantity"
+                          :disabled="!addSlaveFormData.hasInput" class="interWidth"/>
               </el-form-item>
               <el-form-item label="虚拟地址:" prop="inputVirtualAddress">
-                <el-input type="number" v-model.number="gatherFormData.inputVirtualAddress"
-                          :disabled="!gatherFormData.hasInput" class="interWidth"/>
+                <el-input type="number" v-model.number="addSlaveFormData.inputVirtualAddress"
+                          :disabled="!addSlaveFormData.hasInput" class="interWidth"/>
               </el-form-item>
               <el-form-item label="扫描周期(ms):" prop="inputScanRate">
-                <el-input type="number" v-model.number="gatherFormData.inputScanRate"
-                          :disabled="!gatherFormData.hasInput" class="interWidth"/>
+                <el-input type="number" v-model.number="addSlaveFormData.inputScanRate"
+                          :disabled="!addSlaveFormData.hasInput" class="interWidth"/>
               </el-form-item>
             </el-col>
           </el-form>
         </el-row>
         <div class="gather_btns">
-          <el-button type="primary" round @click="addSlave">确定</el-button>
-          <el-button type="info" round @click="cancelGatherDialog">取消</el-button>
+          <el-button type="primary" round @click="addNode">确定</el-button>
+          <el-button type="info" round @click="cancelAddNodeDialog">取消</el-button>
           <el-button type="info" round @click="hpVisible=true">帮助</el-button>
         </div>
       </el-card>
@@ -198,10 +222,39 @@ export default {
         delayPoll: 0,
         responseTimeout: 1000
       }, // 当前port口配置,仅串口有效
-      gatherFormData: {},
+      addSlaveFormData: {
+        portName: this.portName,
+        slaveID: 1,
+        ipAddress: '',
+        hasCoil: true,
+        coilAddress: 0,
+        coilQuantity: 10,
+        coilVirtualAddress: 0,
+        coilScanRate: 1000,
+        hasDiscrete: true,
+        discreteAddress: 0,
+        discreteQuantity: 10,
+        discreteVirtualAddress: 0,
+        discreteScanRate: 1000,
+        hasHolding: true,
+        holdingAddress: 0,
+        holdingQuantity: 10,
+        holdingVirtualAddress: 0,
+        holdingScanRate: 1000,
+        hasInput: true,
+        inputAddress: 0,
+        inputQuantity: 10,
+        inputVirtualAddress: 0,
+        inputScanRate: 1000
+      },
       protoDialogVisible: false,
-      gatherDialogVisible: false,
+      addSlaveDialogVisible: false,
       hpVisible: false
+    }
+  },
+  computed: {
+    ipAddrPort: function () {
+      return this.protoFormData.ipAddress + ':' + this.protoFormData.ipPort
     }
   },
   props: ['portName'],
@@ -218,11 +271,11 @@ export default {
     cancelPortoDialog: function () {
       this.protoDialogVisible = false
     },
-    showGatherDialog: function () {
-      this.gatherDialogVisible = true
+    showAddNodeDialog: function () {
+      this.addSlaveDialogVisible = true
     },
-    cancelGatherDialog: function () {
-      this.gatherDialogVisible = false
+    cancelAddNodeDialog: function () {
+      this.addSlaveDialogVisible = false
     },
     doConfirm: async function () {
       let url = '/gather/usart'
@@ -252,15 +305,35 @@ export default {
         console.log(e)
       }
     },
+    addNode: async function () {
+      try {
+        await this.$http.post('/gather/modbus/node/add', this.addSlaveFormData)
+        this.getNodes()
+      } catch (e) {
+        console.log(e)
+      }
+      this.addSlaveDialogVisible = false
+    },
     editNode: function () {
     },
-    deleteNode: function (id) {
+    deleteNode: async function (id) {
+      let del = {}
+      try {
+        if (id < 0) {
+          del.portName = this.portName
+        } else {
+          del.id = id
+        }
+        await this.$http.post('/gather/modbus/node/del', del)
+        this.getNodes()
+      } catch (e) {
+        console.log(e)
+      }
     },
     getPort: async function () {
       try {
         const result = await this.$http.get('/gather/usart', { params: { portName: this.portName } })
         this.protoFormData = result.data.configList[0]
-        console.log(this.protoFormData)
       } catch (e) {
         console.log(e)
       }

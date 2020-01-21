@@ -11,7 +11,7 @@
       <el-row type="flex" justify="center">
         <el-col :xs="22" :sm="20" :md="16" :lg="16" :xl="12">
           <template>
-            <el-table :data="portsConfigs" style="width: 100%" stripe>
+            <el-table :data="portsConfigs" style="width: 100%" stripe border>
               <el-table-column prop="portName" label="串口"/>
               <el-table-column label="接口类型">RS485/RS232</el-table-column>
               <el-table-column prop="baudRate" label="波特率">
@@ -56,7 +56,7 @@
             </el-table>
           </template>
           <div class="action_btns">
-            <el-button round @click="refresh">刷新</el-button>
+            <el-button type="success" round @click="refresh">刷新</el-button>
             <el-button type="primary" round @click="save">保存</el-button>
           </div>
         </el-col>

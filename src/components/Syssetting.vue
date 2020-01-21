@@ -5,14 +5,12 @@
       <el-breadcrumb-item>系统设置</el-breadcrumb-item>
     </el-breadcrumb>
     <div>
-    </div>
-    <div>
       <el-card>
         <div slot="header" class="clearfix">
           <span>系统设置</span>
         </div>
         <el-row :gutter="20">
-          <!-- 修改密码  -->
+          <!-- 修改密码 -->
           <el-col :offset="2" :xl="9" :lg="9" :md="20" :sm="20" :xs="20">
             <el-card shadow="hover">
               <div slot="header" class="clearfix">
@@ -41,7 +39,7 @@
               </el-form>
             </el-card>
           </el-col>
-          <!-- 授权  -->
+          <!-- 授权 -->
           <el-col :offset="2" :xl="9" :lg="9" :md="20" :sm="20" :xs="20">
             <el-card shadow="hover">
               <div slot="header" class="clearfix">
@@ -68,7 +66,7 @@
             </el-card>
           </el-col>
         </el-row>
-        <el-row>
+        <el-row :gutter="20">
           <!-- 重启恢复出厂  -->
           <el-col :offset="2" :xl="9" :lg="9" :md="20" :sm="20" :xs="20">
             <el-card shadow="hover">
@@ -78,7 +76,7 @@
               <el-button type="danger" round @click="reboot">重启网关</el-button>
               <el-button type="danger" round @click="resoft">重启软件</el-button>
               <el-tooltip class="item" effect="dark" content="本操作 将清空所有数据并设置IP和密码为默认!!!" placement="top-start">
-                <el-button type="danger" round @click="factory">恢重出厂设置</el-button>
+                <el-button type="danger" round @click="factory">恢复出厂设置</el-button>
               </el-tooltip>
             </el-card>
           </el-col>
@@ -97,7 +95,8 @@
                 :file-list="fileList"
                 :auto-upload="false">
                 <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-                <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
+                <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器
+                </el-button>
                 <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
               </el-upload>
             </el-card>

@@ -32,7 +32,7 @@
               <el-input v-model="netForm.secondaryDNS"/>
             </el-form-item>
             <el-form-item>
-              <el-button round @click="refresh">刷新</el-button>
+              <el-button type="success" round @click="refresh">刷新</el-button>
               <el-button type="primary" round @click="save">保存</el-button>
             </el-form-item>
           </el-form>

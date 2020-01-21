@@ -1,8 +1,8 @@
 import Vue from 'vue'
-import App from './App.vue'
-import router from './router'
+import App from '@/App.vue'
+import router from '@/router'
 // plugin
-import './plugins/element.js'
+import '@/plugins/element.js'
 import axios from 'axios'
 
 // icon
@@ -14,7 +14,7 @@ import axios from 'axios'
 // import fab from '@fortawesome/fontawesome-free-brands'
 
 // user
-import './assets/css/global.css'
+import '@/assets/css/global.css'
 
 Vue.config.productionTip = false
 
