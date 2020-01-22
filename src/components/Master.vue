@@ -8,9 +8,46 @@
       <div slot="header" class="clearfix">
         <strong>采集任务</strong>
       </div>
+      <el-form v-if="pName==='Ethernet'" inline>
+        <el-form-item label="IP地址:">
+          <el-select v-model="curIPsID" class="interWidth" placeholder="请选择">
+            <el-option v-for="item in IPlist" :key="item.id" :label="item.ipAddress" :value="item.id"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" round @click="showProtocolDialog">添加</el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="warning" round @click="showProtocolDialog">编辑</el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="danger" round @click="deleteEthernetConfig">删除</el-button>
+        </el-form-item>
+      </el-form>
+      <el-form v-else-if="pName!=='Any'" :model="protocolFormData" label-position="left" inline>
+        <el-form-item label="接口:">
+          <el-input :value="protocolFormData.portName" class="showProtoWidth" disabled/>
+        </el-form-item>
+        <el-form-item label="协议类型:">
+          <el-input v-if="protocolFormData.feature==='mbrtu'" value="MODBUS-RTU" class="showProtoWidth" disabled/>
+          <el-input v-else-if="protocolFormData.feature==='mbascii'" value="MODBUS-ASCII" class="showProtoWidth"
+                    disabled/>
+          <el-input v-else value="None" class="showProtoWidth" disabled/>
+        </el-form-item>
+        <el-form-item label="命令延时(ms):">
+          <el-input :value="protocolFormData.delayPoll" class="showProtoWidth" disabled/>
+        </el-form-item>
+        <el-form-item label="回复超时(ms):">
+          <el-input :value="protocolFormData.responseTimeout" class="showProtoWidth" disabled/>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="warning" round @click="showProtocolDialog">编辑</el-button>
+        </el-form-item>
+      </el-form>
       <el-table :data="nodes" border class="node_table">
         <el-table-column prop="portName" label="接口" width="80px" align="center"/>
-        <el-table-column v-if="portName === 'Ethernet'" prop="ipAddress" label="从站IP" width="200px" align="center"/>
+        <el-table-column v-if="pName === 'Ethernet'||pName==='Any'" prop="ipAddress" label="从站IP" width="200px"
+                         align="center"/>
         <el-table-column prop="slaveID" label="从站地址" width="80px" align="center"/>
         <el-table-column label="功能码参数" align="center">
           <template slot-scope="props">
@@ -63,40 +100,40 @@
         </el-table-column>
       </el-table>
       <div class="action_btns">
-        <el-button type="primary" round @click="showProtocolDialog">编辑当前协议</el-button>
-        <el-button type="primary" round @click="showAddNodeDialog">添加从机</el-button>
+        <el-button type="primary" round v-show="pName!=='Any'" @click="showAddNodeDialog">添加从机</el-button>
         <el-button type="danger" round @click="deleteNode(0)">全部删除</el-button>
         <el-button type="info" round @click="hpVisible=true">帮助</el-button>
       </div>
     </el-card>
-    <el-dialog :title="tabPath()" :visible.sync="protoDialogVisible" center width="400px">
-      <el-form ref="protoFormRef" :model="protoFormData" label-width="100px">
+    <!-- 协议配置 -->
+    <el-dialog :title="tabPath()" :visible.sync="protocolDialogVisible" center width="400px">
+      <el-form ref="protocolFormRef" :model="protocolFormData" label-width="100px">
         <el-form-item label="协议类型:" prop="feature">
           <template>
-            <el-select v-model="protoFormData.feature" class="interWidth">
-              <el-option v-if="portName!=='Ethernet'" label="None" value="none"/>
-              <el-option v-if="portName!=='Ethernet'" label="MODBUS-RTU" value="mbrtu"/>
-              <el-option v-if="portName!=='Ethernet'" label="MODBUS-ASCII" value="mbascii"/>
-              <el-option v-if="portName==='Ethernet'" label="MODBUS-TCP" value="mbtcp"/>
+            <el-select v-model="protocolFormData.feature" class="interWidth">
+              <el-option v-if="pName!=='Ethernet'" label="None" value="none"/>
+              <el-option v-if="pName!=='Ethernet'" label="MODBUS-RTU" value="mbrtu"/>
+              <el-option v-if="pName!=='Ethernet'" label="MODBUS-ASCII" value="mbascii"/>
+              <el-option v-if="pName==='Ethernet'" label="MODBUS-TCP" value="mbtcp"/>
             </el-select>
           </template>
         </el-form-item>
-        <el-form-item v-if="portName==='Ethernet'" label="IP地址:" prop="ipAddress">
-          <el-input v-model="protoFormData.ipAddress" class="interWidth"/>
+        <el-form-item v-if="pName==='Ethernet'" label="IP地址:" prop="ipAddress">
+          <el-input v-model="protocolFormData.ipAddress" class="interWidth"/>
         </el-form-item>
-        <el-form-item v-if="portName==='Ethernet'" label="IP端口:" prop="ipPort">
-          <el-input type="number" v-model.number="protoFormData.ipPort" class="interWidth"/>
+        <el-form-item v-if="pName==='Ethernet'" label="IP端口:" prop="ipPort">
+          <el-input type="number" v-model.number="protocolFormData.ipPort" class="interWidth"/>
         </el-form-item>
         <el-form-item label="回复超时:" prop="port">
-          <el-input type="number" v-model.number="protoFormData.responseTimeout" class="interWidth"/>
+          <el-input type="number" v-model.number="protocolFormData.responseTimeout" class="interWidth"/>
         </el-form-item>
         <el-form-item label="命令延时:" prop="slaveID">
-          <el-input type="number" v-model.number="protoFormData.delayPoll" class="interWidth"/>
+          <el-input type="number" v-model.number="protocolFormData.delayPoll" class="interWidth"/>
         </el-form-item>
       </el-form>
       <span slot="footer" class="form_btns">
           <el-button type="primary" round @click="editProtocol">确定</el-button>
-          <el-button type="info" round @click="cancelPortoDialog">取消</el-button>
+          <el-button type="info" round @click="hidePortoDialog">取消</el-button>
           <el-button type="info" round @click="hpVisible=true">帮助</el-button>
         </span>
     </el-dialog>
@@ -104,29 +141,30 @@
     <el-dialog :title="tabPath()" :visible.sync="addSlaveDialogVisible" center width="800px">
       <el-card>
         <el-row>
-          <el-form ref="gatherFormRef" :model="addSlaveFormData" label-width="100px" class="gather_box">
+          <el-form ref="addSlaveFormRef" :model="addSlaveFormData" label-width="100px" class="gather_box">
             <el-col :span="24">
+              <el-form-item label="接口:">
+                <el-input :value="protocolFormData.portName" class="interWidth" disabled/>
+              </el-form-item>
               <el-form-item label="协议类型:">
-                <el-input v-if="protoFormData.feature==='mbrtu'" value="MODBUS-RTU" class="interWidth" disabled/>
-                <el-input v-else-if="protoFormData.feature==='mbascii'" value="MODBUS-ASCII" class="interWidth"
+                <el-input v-if="protocolFormData.feature==='mbrtu'" value="MODBUS-RTU" class="interWidth" disabled/>
+                <el-input v-else-if="protocolFormData.feature==='mbascii'" value="MODBUS-ASCII" class="interWidth"
                           disabled/>
-                <el-input v-else-if="protoFormData.feature==='mbtcp'" value="MODBUS-TCP" class="interWidth" disabled/>
+                <el-input v-else-if="protocolFormData.feature==='mbtcp'" value="MODBUS-TCP" class="interWidth"
+                          disabled/>
                 <el-input v-else value="None" class="interWidth" disabled/>
               </el-form-item>
-              <el-form-item v-if="portName==='Ethernet'" label="从站IP:">
+              <el-form-item v-if="pName==='Ethernet'" label="从站IP:">
                 <el-input :value="ipAddrPort" class="interWidth" disabled/>
               </el-form-item>
-              <el-form-item label="接口:">
-                <el-input :value="portName" class="interWidth" disabled/>
-              </el-form-item>
               <el-form-item label="命令延时(ms):">
-                <el-input :value="protoFormData.delayPoll" class="interWidth" disabled/>
+                <el-input :value="protocolFormData.delayPoll" class="interWidth" disabled/>
               </el-form-item>
               <el-form-item label="回复超时(ms):">
-                <el-input :value="protoFormData.responseTimeout" class="interWidth" disabled/>
+                <el-input :value="protocolFormData.responseTimeout" class="interWidth" disabled/>
               </el-form-item>
               <el-form-item label="从机地址:" prop="slaveID">
-                <el-input v-model="addSlaveFormData.slaveID" class="interWidth"/>
+                <el-input type="number" v-model.number="addSlaveFormData.slaveID" class="interWidth"/>
               </el-form-item>
             </el-col>
             <!-- coil-->
@@ -164,7 +202,7 @@
               <el-form-item label="功能码:">
                 <el-input value="[2]Read Discrete Inputs" class="interWidth" disabled/>
               </el-form-item>
-              <el-form-item label="数据地址:" prop="discreteAddress">
+              <el-form-item label="数据地址:" prop="discretdeleteEthernetConfigeAddress">
                 <el-input type="number" v-model.number="addSlaveFormData.discreteAddress"
                           :disabled="!addSlaveFormData.hasDiscrete" class="interWidth"/>
               </el-form-item>
@@ -237,7 +275,7 @@
         </el-row>
         <div class="gather_btns">
           <el-button type="primary" round @click="addNode">确定</el-button>
-          <el-button type="info" round @click="cancelAddNodeDialog">取消</el-button>
+          <el-button type="info" round @click="hideAddNodeDialog">取消</el-button>
           <el-button type="info" round @click="hpVisible=true">帮助</el-button>
         </div>
       </el-card>
@@ -250,18 +288,20 @@ export default {
   name: 'master',
   data: function () {
     return {
+      pName: 'Any',
+      curIPsID: 0,
       nodes: [],
       IPlist: [], // 当前IP列表,仅网络口有效
-      protoFormData: {
+      protocolFormData: {
         portName: '',
         feature: 'mbtcp',
         ipAddress: '', // ethernet有效
         ipPort: 502, // ethernet有效
         delayPoll: 0,
         responseTimeout: 1000
-      }, // 当前port口配置,仅串口有效
+      },
       addSlaveFormData: {
-        portName: this.portName,
+        portName: this.pName,
         slaveID: 1,
         ipAddress: '',
         hasCoil: true,
@@ -285,38 +325,66 @@ export default {
         inputVirtualAddress: 0,
         inputScanRate: 1000
       },
-      protoDialogVisible: false,
+      protocolDialogVisible: false,
+      editProtocolDialogVisable: false,
       addSlaveDialogVisible: false,
       hpVisible: false
     }
   },
   computed: {
     ipAddrPort: function () {
-      return this.protoFormData.ipAddress + ':' + this.protoFormData.ipPort
+      return this.protocolFormData.ipAddress + ':' + this.protocolFormData.ipPort
     }
   },
-  props: ['portName'],
+  watch: {
+    '$route'() {
+      this.init()
+    }
+  },
   methods: {
+    init: function () {
+      this.pName = this.$route.params.portName
+      this.getPortConfig()
+      this.getEthernetConfig()
+      this.getNodes()
+    },
     tabPath: function () {
-      return this.portName === 'Any' ? '所有从站' : (this.portName === 'Ethernet' ? '以太网' : this.portName)
+      return this.pName === 'Any' ? '所有从站' : (this.pName === 'Ethernet' ? '以太网' : this.pName)
     },
     showProtocolDialog: function () {
-      if (this.portName !== 'Ethernet') {
-        this.getPort()
+      if (this.pName !== 'Ethernet') {
+        this.getPortConfig()
+      } else {
+        this.protocolFormData.portName = 'Ethernet'
+        this.protocolFormData.feature = 'mbtcp'
       }
-      this.protoDialogVisible = true
+      this.protocolDialogVisible = true
     },
-    cancelPortoDialog: function () {
-      this.protoDialogVisible = false
+    hidePortoDialog: function () {
+      this.protocolDialogVisible = false
+    },
+    showEditProtocolDialog: function () {
+      this.editProtocolDialogVisable = true
+    },
+    hideEditProtocolDialog: function () {
+      this.editProtocolDialogVisable = false
     },
     showAddNodeDialog: function () {
+      if (this.pName !== 'Ethernet') {
+        const ok = this.getPortConfig()
+        if (!ok || this.protocolFormData.feature === 'none') {
+          this.$message.error('未使能相关协议')
+          return
+        }
+      }
+
       this.addSlaveDialogVisible = true
     },
-    cancelAddNodeDialog: function () {
+    hideAddNodeDialog: function () {
       this.addSlaveDialogVisible = false
     },
     getNodes: async function () {
-      let url = '/gather/modbus/node' + ((this.portName !== 'Any') ? ('?portName=' + this.portName) : '')
+      let url = '/gather/modbus/node' + ((this.pName !== 'Any') ? ('?portName=' + this.pName) : '')
       try {
         const result = await this.$http.get(url)
         this.nodes = result.data.nodeList
@@ -327,6 +395,7 @@ export default {
     },
     addNode: async function () {
       try {
+        this.addSlaveFormData.portName = this.pName
         await this.$http.put('/gather/modbus/node', this.addSlaveFormData)
         this.getNodes()
       } catch (e) {
@@ -340,45 +409,54 @@ export default {
       let del = {}
       try {
         if (id < 0) {
-          del.portName = this.portName
+          del.portName = this.pName
         } else {
           del.id = id
         }
-        await this.$http.delete('/gather/modbus/node', del)
+        await this.$http.delete('/gather/modbus/node', { data: del })
         this.getNodes()
       } catch (e) {
         console.log(e)
       }
     },
-    getPort: async function () {
+    getPortConfig: async function () {
       try {
-        const result = await this.$http.get('/gather/usart', { params: { portName: this.portName } })
-        this.protoFormData = result.data.configList[0]
+        const result = await this.$http.get('/gather/usart', { params: { portName: this.pName } })
+        this.protocolFormData = result.data.configList[0]
+        return true
       } catch (e) {
         console.log(e)
+        return false
       }
     },
     editProtocol: async function () {
-      let url = '/gather/usart'
       let inter = {
-        portName: this.protoFormData.portName,
-        feature: this.protoFormData.feature,
-        responseTimeout: this.protoFormData.responseTimeout,
-        delayPoll: this.protoFormData.delayPoll,
-        ipAddress: ''
+        portName: this.protocolFormData.portName,
+        feature: this.protocolFormData.feature,
+        responseTimeout: this.protocolFormData.responseTimeout,
+        delayPoll: this.protocolFormData.delayPoll
       }
 
-      if (this.portName === 'Ethernet') {
-        inter.ipAddress = this.protoFormData.ipAddress + ':' + this.protoFormData.ipPort
+      if (this.pName === 'Ethernet') {
+        inter.ipAddress = this.protocolFormData.ipAddress + ':' + this.protocolFormData.ipPort
         inter.portName = ''
-        url = '/gather/ethernet?action=add'
+        await this.$http.put('/gather/ethernet', inter)
+      } else {
+        await this.$http.post('/gather/usart', inter)
       }
-      await this.$http.post(url, inter)
-      this.protoDialogVisible = false
+
+      this.protocolDialogVisible = false
+    },
+    getEthernetConfig: async function () {
+      const result = await this.$http.get('/gather/ethernet')
+      this.IPlist = result.data.configList
+    },
+    deleteEthernetConfig: async function () {
+      this.$message.success('删除成功')
     }
   },
   mounted() {
-    this.getNodes()
+    this.init()
   }
 }
 </script>
@@ -402,6 +480,10 @@ export default {
 
   .action_btns {
     margin-top: 20px;
+  }
+
+  .showProtoWidth {
+    width: 140px;
   }
 
   .interWidth {

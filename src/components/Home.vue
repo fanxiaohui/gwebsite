@@ -77,7 +77,7 @@ export default {
       }
     },
     setNavState(activePath) {
-      console.log(activePath)
+      console.log('active path: ' + activePath)
       window.sessionStorage.setItem('activePath', activePath)
       this.activePath = activePath
     }
