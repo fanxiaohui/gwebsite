@@ -26,7 +26,7 @@ import {
   Option,
   Tooltip,
   Dialog,
-  Drawer, Alert
+  Drawer, Alert, Collapse, CollapseItem
 } from 'element-ui'
 
 Vue.use(Button)
@@ -55,6 +55,8 @@ Vue.use(Tooltip)
 Vue.use(Dialog)
 Vue.use(Drawer)
 Vue.use(Alert)
+Vue.use(Collapse)
+Vue.use(CollapseItem)
 // 定义提示消息全局件
 Vue.prototype.$messageBox = MessageBox
 Vue.prototype.$message = Message
