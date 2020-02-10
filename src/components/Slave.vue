@@ -23,7 +23,7 @@
       <div class="action_btns">
         <el-button type="primary" round @click="showDialog">添加从机</el-button>
         <el-button type="danger" round @click="deleteSlave(0)">全部删除</el-button>
-        <el-button type="info" round @click="hpVisible=true">帮助</el-button>
+        <el-button type="info" round @click="showHelp">帮助</el-button>
       </div>
     </el-card>
     <el-dialog title="以太网" :visible.sync="dialogVisible" center width="400px">
@@ -51,8 +51,8 @@
       </el-form>
       <span slot="footer" class="form_btns">
           <el-button type="primary" round @click="addSlave">确定</el-button>
-          <el-button type="info" round @click="cancel">取消</el-button>
-          <el-button type="info" round @click="hpVisible=true">帮助</el-button>
+          <el-button type="info" round @click="hideDialog">取消</el-button>
+          <el-button type="info" round @click="showHelp">帮助</el-button>
         </span>
     </el-dialog>
     <el-drawer title="帮助" :visible.sync="hpVisible" direction="rtl">
@@ -94,14 +94,14 @@ export default {
     }
   },
   methods: {
-    getSlaves: async function () {
-      try {
-        const result = await this.$http.get('/modbus/slaves')
-        this.nodes = result.data.slaveNode
-        console.log(result.data)
-      } catch (e) {
-        console.log(e)
-      }
+    showDialog: function () {
+      this.dialogVisible = true
+    },
+    hideDialog: function () {
+      this.dialogVisible = false
+    },
+    showHelp: function () {
+      this.hpVisible = true
     },
     getBindInterface: async function () {
       try {
@@ -112,11 +112,14 @@ export default {
         console.log(e)
       }
     },
-    showDialog: function () {
-      this.dialogVisible = true
-    },
-    cancel: function () {
-      this.dialogVisible = false
+    getSlaves: async function () {
+      try {
+        const result = await this.$http.get('/modbus/slaves')
+        this.nodes = result.data.slaveNode
+        console.log(result.data)
+      } catch (e) {
+        console.log(e)
+      }
     },
     addSlave: function () {
       this.$refs.interFormRef.validate(async valid => {
@@ -125,9 +128,9 @@ export default {
           return
         }
         try {
-          await this.$http.put('/modbus/slaves', this.interFormData)
-          this.$message.success('添加成功!')
+          await this.$http.post('/modbus/slaves', this.interFormData)
           this.dialogVisible = false
+          this.$message.success('添加成功!')
           this.getSlaves()
         } catch (e) {
           console.log(e)
@@ -143,9 +146,8 @@ export default {
       try {
         await this.$messageBox.confirm('此操作将删除从机节点,是否确认?', '删除从机节点', { type: 'warning' })
         try {
-          await this.$http.delete('/modbus/slaves', {
-            data: { id: id }
-          })
+          let url = '/modbus/slaves' + (id !== 0 ? ('/' + id) : '')
+          await this.$http.delete(url)
           this.getSlaves()
           this.$message.success('删除成功!')
         } catch (e) {
@@ -158,8 +160,8 @@ export default {
     }
   },
   created() {
-    this.getSlaves()
     this.getBindInterface()
+    this.getSlaves()
   }
 }
 </script>
