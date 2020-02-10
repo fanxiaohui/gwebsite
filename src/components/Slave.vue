@@ -97,9 +97,17 @@ export default {
     getSlaves: async function () {
       try {
         const result = await this.$http.get('/modbus/slaves')
-        this.bindInterList = result.data.bindInterface
         this.nodes = result.data.slaveNode
-        console.log(this.nodes)
+        console.log(result.data)
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    getBindInterface: async function () {
+      try {
+        const result = await this.$http.get('/modbus/bindInterfaces')
+        this.bindInterList = result.data.bindInterface
+        console.log(this.bindInterList)
       } catch (e) {
         console.log(e)
       }
@@ -151,6 +159,7 @@ export default {
   },
   created() {
     this.getSlaves()
+    this.getBindInterface()
   }
 }
 </script>
