@@ -16,21 +16,42 @@
               <div slot="header" class="clearfix">
                 <span>修改密码</span>
               </div>
-              <el-form ref="passwdFormRef" :rules="passwdFromRules" :model="passwdFormData" label-width="100px">
+              <el-form
+                ref="passwdFormRef"
+                :rules="passwdFromRules"
+                :model="passwdFormData"
+                label-width="100px"
+              >
                 <el-form-item label="用户名:" prop="username">
-                  <el-input v-model="passwdFormData.username" disabled prefix-icon="el-icon-user-solid"/>
+                  <el-input
+                    v-model="passwdFormData.username"
+                    disabled
+                    prefix-icon="el-icon-user-solid"
+                  />
                 </el-form-item>
                 <el-form-item label="原密码:" prop="oldPassword">
-                  <el-input v-model="passwdFormData.oldPassword" show-password prefix-icon="el-icon-lock"
-                            @keyup.enter.native="passwd"/>
+                  <el-input
+                    v-model="passwdFormData.oldPassword"
+                    show-password
+                    prefix-icon="el-icon-lock"
+                    @keyup.enter.native="passwd"
+                  />
                 </el-form-item>
                 <el-form-item label="新密码:" prop="newPassword">
-                  <el-input v-model="passwdFormData.newPassword" show-password prefix-icon="el-icon-lock"
-                            @keyup.enter.native="passwd"/>
+                  <el-input
+                    v-model="passwdFormData.newPassword"
+                    show-password
+                    prefix-icon="el-icon-lock"
+                    @keyup.enter.native="passwd"
+                  />
                 </el-form-item>
                 <el-form-item label="确认新密码:" prop="confirmPassword">
-                  <el-input v-model="passwdFormData.confirmPassword" show-password prefix-icon="el-icon-lock"
-                            @keyup.enter.native="passwd"/>
+                  <el-input
+                    v-model="passwdFormData.confirmPassword"
+                    show-password
+                    prefix-icon="el-icon-lock"
+                    @keyup.enter.native="passwd"
+                  />
                 </el-form-item>
                 <el-form-item class="form_btns">
                   <el-button type="primary" round @click="passwd">保存</el-button>
@@ -45,18 +66,23 @@
               <div slot="header" class="clearfix">
                 <span>授权认证</span>
               </div>
-              <el-form ref="licenceKeyRef" :rules="licenceKeyRules" :model="warrantFormData" label-width="100px">
+              <el-form
+                ref="licenceKeyRef"
+                :rules="licenceKeyRules"
+                :model="warrantFormData"
+                label-width="100px"
+              >
                 <el-form-item label="当前状态:">
-                  <el-input v-model="warrantFormData.hasWarrant" readonly/>
+                  <el-input v-model="warrantFormData.hasWarrant" readonly />
                 </el-form-item>
                 <el-form-item label="到期日期:">
-                  <el-input v-model="warrantFormData.expiryTime" readonly/>
+                  <el-input v-model="warrantFormData.expiryTime" readonly />
                 </el-form-item>
                 <el-form-item label="原始码:">
-                  <el-input v-model="warrantFormData.warrant" readonly/>
+                  <el-input v-model="warrantFormData.warrant" readonly />
                 </el-form-item>
                 <el-form-item label="授权码:" required prop="licenceKey">
-                  <el-input v-model="warrantFormData.licenceKey"/>
+                  <el-input v-model="warrantFormData.licenceKey" />
                 </el-form-item>
                 <el-form-item class="form_btns">
                   <el-button type="primary" round @click="approve">认证</el-button>
@@ -75,7 +101,12 @@
               </div>
               <el-button type="danger" round @click="reboot">重启网关</el-button>
               <el-button type="danger" round @click="resoft">重启软件</el-button>
-              <el-tooltip class="item" effect="dark" content="本操作 将清空所有数据并设置IP和密码为默认!!!" placement="top-start">
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="本操作 将清空所有数据并设置IP和密码为默认!!!"
+                placement="top-start"
+              >
                 <el-button type="danger" round @click="factory">恢复出厂设置</el-button>
               </el-tooltip>
             </el-card>
@@ -87,17 +118,21 @@
                 <span>固件升级</span>
               </div>
               <el-upload
-                class="upload-demo"
                 ref="upload"
-                action="https://jsonplaceholder.typicode.com/posts/"
-                :on-preview="handlePreview"
-                :on-remove="handleRemove"
-                :file-list="fileList"
-                :auto-upload="false">
-                <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-                <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器
-                </el-button>
-                <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+                accept=".bz2"
+                action="http://127.0.0.1/api/upgrade"
+                :headers="headers"
+                :data="{'md5':'6cf676e9a8af0c0d1024ead7c2567a3c'}"
+                :limit="1"
+                :auto-upload="false"
+                name="firmware"
+                :on-exceed="uploadExceed"
+                :on-success="uploadSuccess"
+                :on-error="uploadError"
+              >
+                <el-button slot="trigger" type="primary">选取文件</el-button>
+                <el-button style="margin-left: 10px;" type="success" @click="uploadSubmit">开始更新</el-button>
+                <div slot="tip" class="el-upload_tip">只支持bz压缩文件,且不超过15M</div>
               </el-upload>
             </el-card>
           </el-col>
@@ -110,7 +145,7 @@
 <script>
 export default {
   name: 'syssetting',
-  data: function () {
+  data: function() {
     return {
       passwdFormData: {
         username: 'admin',
@@ -149,13 +184,20 @@ export default {
       }
     }
   },
+  computed: {
+    headers: function() {
+      return {
+        Authorization: 'BEARER ' + window.sessionStorage.getItem('token')
+      }
+    }
+  },
   methods: {
-    rebootAction: async function (message, url) {
+    rebootAction: async function(message, url) {
       try {
-        await this.$messageBox.confirm(
-          message,
-          '警告',
-          { type: 'warning', center: true })
+        await this.$messageBox.confirm(message, '警告', {
+          type: 'warning',
+          center: true
+        })
         try {
           // await this.$http.post(url)
           this.$message.warning('重启中...')
@@ -166,18 +208,19 @@ export default {
         this.$message.info('取消操作')
       }
     },
-    reboot: async function () {
+    reboot: async function() {
       this.rebootAction('确认重启网关?', '/syscfg/reboot')
     },
-    resoft: async function () {
+    resoft: async function() {
       this.rebootAction('确认重启软件?', '/syscfg/exec')
     },
-    factory: async function () {
+    factory: async function() {
       try {
         await this.$messageBox.confirm(
           '恢复出厂设置操作,将清除所有数据,并将IP与密码将会恢复至默认? - IP地址重启生效!!!',
           '警告',
-          { type: 'warning', center: true })
+          { type: 'warning', center: true }
+        )
         this.$message.warning('恢复出厂中...')
         try {
           await this.$http.post('/syscfg/factoryReset')
@@ -189,10 +232,10 @@ export default {
         this.$message.info('取消操作')
       }
     },
-    resetPasswdInfo: function () {
+    resetPasswdInfo: function() {
       this.$refs.passwdFormRef.resetFields()
     },
-    passwd: function () {
+    passwd: function() {
       this.$refs.passwdFormRef.validate(async valid => {
         if (!valid) {
           this.$message.error('输入不正确,请重新输入!')
@@ -207,7 +250,7 @@ export default {
         }
       })
     },
-    approve: async function () {
+    approve: async function() {
       this.$refs.licenceKeyRef.validate(async valid => {
         console.log('aaa')
         if (!valid) {
@@ -229,20 +272,44 @@ export default {
         this.getWarrant()
       })
     },
-    resetLicenceKey: function () {
+    resetLicenceKey: function() {
       this.$refs.licenceKeyRef.resetFields()
     },
-    getWarrant: async function () {
+    getWarrant: async function() {
       try {
         const result = await this.$http.get('/warrant')
         console.log(result)
-        this.warrantFormData.hasWarrant = result.data.hasWarrant ? '已授权' : '未授权'
+        this.warrantFormData.hasWarrant = result.data.hasWarrant
+          ? '已授权'
+          : '未授权'
         this.warrantFormData.expiryTime = result.data.expiryTime
         this.warrantFormData.warrant = result.data.warrant
       } catch (e) {
         console.log(e)
       }
+    },
+    uploadExceed: function(file, fileList) {
+      console.log(file)
+      console.log(fileList)
+      this.$message.info('当前限制选择1个文件!!!')
+    },
+    uploadSuccess: function(response, file, fileList) {
+      console.log(response)
+      console.log(file)
+      console.log(fileList)
+      this.$refs.upload.clearFiles()
+    },
+    uploadError: function(rerr, file, fileList) {
+      console.log(rerr)
+      console.log(file)
+      console.log(fileList)
+    },
+    uploadSubmit: function() {
+      this.$refs.upload.submit()
     }
+    // uploadHttpRequest: function(req) {
+    //   console.log(req)
+    // }
   },
   created() {
     this.getWarrant()
@@ -251,5 +318,4 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
 </style>
