@@ -101,8 +101,8 @@ export default {
         bindPortName: 'Port1'
       },
       queryInfo: {
-        pageNum: 1,
-        pageSize: 10
+        pagenum: 1,
+        pagesize: 10
       },
       bindInterList: [],
       nodes: [],
@@ -131,11 +131,11 @@ export default {
       this.hpVisible = true
     },
     handleSizeChange(newSize) {
-      this.queryInfo.pageSize = newSize
+      this.queryInfo.pagesize = newSize
       this.getSlaves()
     },
     handleCurrentChange(newPage) {
-      this.queryInfo.pageNum = newPage
+      this.queryInfo.pagenum = newPage
       this.getSlaves()
     },
     getBindInterface: async function() {
