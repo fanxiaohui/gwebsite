@@ -81,7 +81,7 @@ export default {
         this.portsConfigs = result.data.portsList
         isSuccess = true
       } catch (e) {
-        console.log(e)
+        // console.log(e)
       }
       return isSuccess
     },

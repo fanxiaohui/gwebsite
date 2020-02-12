@@ -157,7 +157,7 @@ export default {
         this.sysMemInfo = result.data.sysMemInfo
         this.origTime = this.sysInfo.runningTime
       } catch (e) {
-        console.log(e)
+        // console.log(e)
       }
     }
   },

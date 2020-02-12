@@ -69,7 +69,7 @@ export default {
         this.netForm = result.data
       } catch (e) {
         isSuccess = false
-        console.log(e)
+        // console.log(e)
       }
       return isSuccess
     },
@@ -89,7 +89,7 @@ export default {
         } catch (e) {
           this.$message.error('保存失败')
           this.getNetconfig()
-          console.log(e)
+          // console.log(e)
         }
       })
     }

@@ -4,11 +4,11 @@
       <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>系统设置</el-breadcrumb-item>
     </el-breadcrumb>
-    <div>
-      <el-card>
-        <div slot="header" class="clearfix">
-          <span>系统设置</span>
-        </div>
+    <el-card>
+      <div slot="header" class="clearfix">
+        <span>系统设置</span>
+      </div>
+      <div v-show="!isUpload">
         <el-row :gutter="20">
           <!-- 修改密码 -->
           <el-col :offset="2" :xl="9" :lg="9" :md="20" :sm="20" :xs="20">
@@ -120,29 +120,42 @@
               <el-upload
                 ref="upload"
                 accept=".bz2"
-                action="http://127.0.0.1/api/upgrade"
+                :action="uploadUrl"
                 :headers="headers"
-                :data="{'md5':'6cf676e9a8af0c0d1024ead7c2567a3c'}"
+                :data="exceedData"
                 :limit="1"
                 :auto-upload="false"
                 name="firmware"
                 :on-exceed="uploadExceed"
+                :on-change="uploadChange"
+                :on-remove="uploadRemove"
+                :before-upload="uploadBefore"
                 :on-success="uploadSuccess"
                 :on-error="uploadError"
               >
                 <el-button slot="trigger" type="primary">选取文件</el-button>
                 <el-button style="margin-left: 10px;" type="success" @click="uploadSubmit">开始更新</el-button>
-                <div slot="tip" class="el-upload_tip">只支持bz压缩文件,且不超过15M</div>
+                <div>
+                  <strong>MD5:</strong>
+                  <strong v-text="exceedData.md5"></strong>
+                </div>
+                <div slot="tip" class="el-upload_tip">只支持bz压缩文件,且不超过10M</div>
               </el-upload>
             </el-card>
           </el-col>
         </el-row>
-      </el-card>
-    </div>
+      </div>
+      <div v-show="isUpload">
+        <strong>程序更新中...,请勿关闭网关电源和刷新本页面!!!</strong>
+        <el-progress :text-inside="true" :stroke-width="30" :percentage="upgradeRate"></el-progress>
+      </div>
+    </el-card>
   </div>
 </template>
 
 <script>
+import SparkMD5 from 'spark-md5'
+
 export default {
   name: 'syssetting',
   data: function() {
@@ -181,7 +194,12 @@ export default {
         licenceKey: [
           { required: true, message: '请输入有效授权码', trigger: 'blur' }
         ]
-      }
+      },
+      exceedData: {
+        md5: ''
+      },
+      isUpload: false,
+      upgradeRate: 0
     }
   },
   computed: {
@@ -189,6 +207,9 @@ export default {
       return {
         Authorization: 'BEARER ' + window.sessionStorage.getItem('token')
       }
+    },
+    uploadUrl: function() {
+      return this.$http.defaults.baseURL + '/upgrade'
     }
   },
   methods: {
@@ -199,7 +220,7 @@ export default {
           center: true
         })
         try {
-          // await this.$http.post(url)
+          await this.$http.post(url)
           this.$message.warning('重启中...')
         } catch (e) {
           this.$message.warning('重启失败')
@@ -208,10 +229,10 @@ export default {
         this.$message.info('取消操作')
       }
     },
-    reboot: async function() {
+    reboot: function() {
       this.rebootAction('确认重启网关?', '/syscfg/reboot')
     },
-    resoft: async function() {
+    resoft: function() {
       this.rebootAction('确认重启软件?', '/syscfg/exec')
     },
     factory: async function() {
@@ -252,7 +273,6 @@ export default {
     },
     approve: async function() {
       this.$refs.licenceKeyRef.validate(async valid => {
-        console.log('aaa')
         if (!valid) {
           this.$message.error('授权码输入不正确,请重新输入!')
           this.resetLicenceKey()
@@ -278,38 +298,106 @@ export default {
     getWarrant: async function() {
       try {
         const result = await this.$http.get('/warrant')
-        console.log(result)
         this.warrantFormData.hasWarrant = result.data.hasWarrant
           ? '已授权'
           : '未授权'
         this.warrantFormData.expiryTime = result.data.expiryTime
         this.warrantFormData.warrant = result.data.warrant
       } catch (e) {
-        console.log(e)
+        // console.log(e)
       }
     },
-    uploadExceed: function(file, fileList) {
-      console.log(file)
-      console.log(fileList)
+    uploadExceed: function(file) {
       this.$message.info('当前限制选择1个文件!!!')
     },
-    uploadSuccess: function(response, file, fileList) {
-      console.log(response)
-      console.log(file)
-      console.log(fileList)
-      this.$refs.upload.clearFiles()
+    uploadChange: function(file) {
+      let filename = file.name
+      let fileExt = /[.]/.exec(filename)
+        ? /[^.]+$/.exec(filename.toLowerCase())
+        : ''
+      // 仅支持bz2压缩
+      if (fileExt[0] !== 'bz2') {
+        this.$message.error('文件类型只支持bz2,请重新选择')
+        this.$refs.upload.clearFiles()
+        return false
+      }
+      // 文件大小限制10M
+      if (file.size > 10 * 1024 * 1024) {
+        this.$message.error('文件大小限制10M,请重新选择')
+        this.$refs.upload.clearFiles()
+        return false
+      }
+
+      var upthis = this
+      var fileRaw = file.raw
+      var blobSlice =
+        File.prototype.mozSlice ||
+        File.prototype.webkitSlice ||
+        File.prototype.slice
+      var chunkSize = 2 * 1024 * 1024
+      var chunks = Math.ceil(fileRaw.size / chunkSize)
+      var currentChunk = 0
+      var fileReader = new FileReader()
+      var spark = new SparkMD5()
+
+      this.exceedData.md5 = ''
+      fileReader.onload = function(e) {
+        spark.appendBinary(e.target.result)
+        currentChunk++
+        if (currentChunk < chunks) {
+          loadNext()
+        } else {
+          // 获得计算后的md5
+          upthis.exceedData.md5 = spark.end()
+        }
+      }
+
+      function loadNext() {
+        let start = currentChunk * chunkSize
+        let end =
+          start + chunkSize >= fileRaw.size ? fileRaw.size : start + chunkSize
+        // 注意这里的fileRaw,即原生file
+        fileReader.readAsBinaryString(blobSlice.call(fileRaw, start, end))
+      }
+
+      loadNext()
+      return true
     },
-    uploadError: function(rerr, file, fileList) {
-      console.log(rerr)
-      console.log(file)
-      console.log(fileList)
+    uploadBefore: function(file) {
+      if (this.exceedData.md5 === '') {
+        this.$message.error('内部错误,文件无效md5值!!!')
+        return false
+      }
+      return true
+    },
+    uploadRemove: function() {
+      this.exceedData.md5 = ''
+    },
+    uploadSuccess: function(response, file) {
+      this.$refs.upload.clearFiles()
+      this.$message.success('上传成功,开始更新固件')
+      this.upgradeRate = 0
+      this.isUpload = true
+
+      var _this = this
+      var t = setInterval(rate, 1000)
+
+      function rate() {
+        _this.upgradeRate += Math.ceil(Math.random() * 5)
+        if (_this.upgradeRate >= 100) {
+          _this.upgradeRate = 100
+          clearInterval(t)
+          window.sessionStorage.clear()
+          _this.$router.push('/login')
+        }
+      }
+    },
+    uploadError: function(rerr, file) {
+      this.$message.error('上传失败,请重试')
     },
     uploadSubmit: function() {
       this.$refs.upload.submit()
     }
-    // uploadHttpRequest: function(req) {
-    //   console.log(req)
-    // }
   },
   created() {
     this.getWarrant()

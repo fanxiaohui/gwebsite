@@ -31,7 +31,8 @@ import {
   Collapse,
   CollapseItem,
   Pagination,
-  Upload
+  Upload,
+  Progress
 } from 'element-ui'
 
 Vue.use(Button)
@@ -64,6 +65,7 @@ Vue.use(Collapse)
 Vue.use(CollapseItem)
 Vue.use(Pagination)
 Vue.use(Upload)
+Vue.use(Progress)
 // 定义提示消息全局件
 Vue.prototype.$messageBox = MessageBox
 Vue.prototype.$message = Message

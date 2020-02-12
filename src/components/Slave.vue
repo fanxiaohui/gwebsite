@@ -142,9 +142,9 @@ export default {
       try {
         const result = await this.$http.get('/modbus/bindInterfaces')
         this.bindInterList = result.data.bindInterface
-        console.log(this.bindInterList)
+        // console.log(this.bindInterList)
       } catch (e) {
-        console.log(e)
+        // console.log(e)
       }
     },
     getSlaves: async function() {
@@ -154,9 +154,9 @@ export default {
         })
         this.nodes = result.data.slaveNode
         this.total = result.data.total
-        console.log(result.data)
+        // console.log(result.data)
       } catch (e) {
-        console.log(e)
+        // console.log(e)
       }
     },
     addSlave: function() {
@@ -171,7 +171,7 @@ export default {
           this.$message.success('添加成功!')
           this.getSlaves()
         } catch (e) {
-          console.log(e)
+          // console.log(e)
           this.$message.error('添加失败!')
         }
       })
@@ -193,7 +193,7 @@ export default {
           this.getSlaves()
           this.$message.success('删除成功!')
         } catch (e) {
-          console.log(e)
+          // console.log(e)
           this.$message.error('删除失败!')
         }
       } catch (e) {

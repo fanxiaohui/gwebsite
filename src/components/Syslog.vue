@@ -10,7 +10,7 @@
       </div>
       <el-form ref="form" @submit.native.prevent>
         <el-form-item class="logs_area">
-          <el-input type="textarea" v-model="logForm.logs" readonly/>
+          <el-input type="textarea" v-model="logForm.logs" readonly />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" round @click="refresh">刷新</el-button>
@@ -24,7 +24,7 @@
 <script>
 export default {
   name: 'syslog',
-  data: function () {
+  data: function() {
     return {
       logForm: {
         logs: ''
@@ -32,31 +32,31 @@ export default {
     }
   },
   methods: {
-    getLogs: async function () {
+    getLogs: async function() {
       let isSuccess = true
       try {
-        const result = await this.$http.get('/logs')
         this.logForm.logs = ''
-        result.data.list.forEach((item) => {
+        const result = await this.$http.get('/logs')
+        result.data.list.forEach(item => {
           this.logForm.logs += item + '\t\n'
         })
       } catch (e) {
         isSuccess = false
-        console.log(e)
       }
       return isSuccess
     },
-    refresh: function () {
-      this.getLogs() ? this.$message.success('刷新成功') : this.$message.error('刷新失败')
+    refresh: function() {
+      this.getLogs()
+        ? this.$message.success('刷新成功')
+        : this.$message.error('刷新失败')
     },
-    deleteLogs: async function () {
+    deleteLogs: async function() {
       try {
         await this.$http.post('/syscfg/clearLogs')
         this.logForm.logs = ''
         this.$message.success('删除成功')
       } catch (e) {
         this.$message.error('删除失败')
-        console.log(e)
       }
     }
   },
@@ -67,5 +67,4 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
 </style>

@@ -73,11 +73,11 @@ export default {
         const result = await this.$http.get('/usart/ports')
         this.ports = result.data.portList
       } catch (e) {
-        console.log(e)
+        // console.log(e)
       }
     },
     setNavState(activePath) {
-      console.log('active path: ' + activePath)
+      // console.log('active path: ' + activePath)
       window.sessionStorage.setItem('activePath', activePath)
       this.activePath = activePath
     }
