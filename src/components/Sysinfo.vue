@@ -21,6 +21,11 @@
           </el-row>
           <el-divider/>
           <el-row type="flex" justify="space-around">
+            <el-col :span="6" :offset="2">MAC地址:</el-col>
+            <el-col :span="14">{{sysInfo.mac}}</el-col>
+          </el-row>
+          <el-divider/>
+          <el-row type="flex" justify="space-around">
             <el-col :span="6" :offset="2">固件版本:</el-col>
             <el-col :span="14">{{sysInfo.version}}</el-col>
           </el-row>
@@ -137,16 +142,8 @@ export default {
       let second = tmpSec % 60
       let minute = Math.floor(tmpSec / 60) % 60
       let hour = Math.floor(tmpSec / 3600)
-      let result = ''
 
-      if (hour > 0) {
-        result += hour + '小时'
-      }
-
-      if (minute > 0) {
-        result += minute + '分'
-      }
-      return result + second + '秒'
+      return ((hour > 0) ? (hour + '小时') : '') + (minute > 0 ? (minute + '分') : '') + second + '秒'
     }
   },
   methods: {

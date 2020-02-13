@@ -232,7 +232,7 @@
                   active-color="#13ce66"
                   inactive-color="#ff4949"
                 />
-                <strong class="netTypeShow">{{addSlaveFormData.hasCoil ? '已使能': '已失能'}}</strong>
+                <strong>{{addSlaveFormData.hasCoil ? '已使能': '已失能'}}</strong>
               </el-form-item>
               <el-form-item label="功能码:">
                 <el-input value="[1]Read Coils" class="interWidth" disabled/>
@@ -278,7 +278,7 @@
                   active-color="#13ce66"
                   inactive-color="#ff4949"
                 />
-                <strong class="netTypeShow">{{addSlaveFormData.hasDiscrete ? '已使能': '已失能'}}</strong>
+                <strong>{{addSlaveFormData.hasDiscrete ? '已使能': '已失能'}}</strong>
               </el-form-item>
               <el-form-item label="功能码:">
                 <el-input value="[2]Read Discrete Inputs" class="interWidth" disabled/>
@@ -324,7 +324,7 @@
                   active-color="#13ce66"
                   inactive-color="#ff4949"
                 />
-                <strong class="netTypeShow">{{addSlaveFormData.hasHolding ? '已使能': '已失能'}}</strong>
+                <strong>{{addSlaveFormData.hasHolding ? '已使能': '已失能'}}</strong>
               </el-form-item>
               <el-form-item label="功能码:">
                 <el-input value="[3]Read Holding Registers" class="interWidth" disabled/>
@@ -370,7 +370,7 @@
                   active-color="#13ce66"
                   inactive-color="#ff4949"
                 />
-                <strong class="netTypeShow">{{addSlaveFormData.hasInput ? '已使能': '已失能'}}</strong>
+                <strong>{{addSlaveFormData.hasInput ? '已使能': '已失能'}}</strong>
               </el-form-item>
               <el-form-item label="功能码:">
                 <el-input value="[4]Read Input Registers" class="interWidth" disabled/>

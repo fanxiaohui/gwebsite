@@ -24,6 +24,13 @@ axios.interceptors.request.use(config => {
   config.headers.Authorization = 'BEARER ' + window.sessionStorage.getItem('token')
   return config
 })
+axios.interceptors.response.use(response => {
+  console.log(response)
+  return response
+}, error => {
+  console.log(error)
+  return Promise.reject(error)
+})
 Vue.prototype.$http = axios
 
 // fontawesomeCore.library.add(fas, far, fab)
