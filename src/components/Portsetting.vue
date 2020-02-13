@@ -57,7 +57,7 @@
           </template>
           <div class="action_btns">
             <el-button type="success" round @click="refresh">刷新</el-button>
-            <el-button type="primary" round @click="save">保存</el-button>
+            <el-button type="primary" round @click="saveUsartConfig">保存</el-button>
           </div>
         </el-col>
       </el-row>
@@ -67,7 +67,7 @@
 
 <script>
 export default {
-  name: 'portsetting',
+  name: 'Portsetting',
   data: function () {
     return {
       portsConfigs: []
@@ -75,27 +75,26 @@ export default {
   },
   methods: {
     getUsartConfig: async function () {
-      let isSuccess = false
+      let isSuccess = true
       try {
         const result = await this.$http.get('/usart/config')
         this.portsConfigs = result.data.portsList
-        isSuccess = true
       } catch (e) {
-        // console.log(e)
+        isSuccess = false
       }
       return isSuccess
     },
-    refresh: function () {
-      this.getUsartConfig() ? this.$message.success('刷新成功') : this.$message.error('刷新失败')
-    },
-    save: async function () {
+    saveUsartConfig: async function () {
       try {
-        await this.$http.post('/usart/config', { portsList: this.portsConfigs })
+        await this.$http.put('/usart/config', { portsList: this.portsConfigs })
         this.getUsartConfig()
         this.$message.success('保存成功')
       } catch (e) {
         this.$message.error('保存失败')
       }
+    },
+    refresh: async function () {
+      await this.getUsartConfig() ? this.$message.success('刷新成功') : this.$message.error('刷新失败')
     }
   },
   created() {

@@ -157,7 +157,7 @@
 import SparkMD5 from 'spark-md5'
 
 export default {
-  name: 'syssetting',
+  name: 'Syssetting',
   data: function() {
     return {
       passwdFormData: {

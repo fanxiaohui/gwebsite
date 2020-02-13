@@ -10,7 +10,7 @@
       </div>
       <el-form ref="form" @submit.native.prevent>
         <el-form-item class="logs_area">
-          <el-input type="textarea" v-model="logForm.logs" readonly />
+          <el-input type="textarea" :autosize="{minRows:25,maxRows:25}" v-model="logForm.logs" readonly/>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" round @click="refresh">刷新</el-button>
@@ -23,8 +23,8 @@
 
 <script>
 export default {
-  name: 'syslog',
-  data: function() {
+  name: 'Syslog',
+  data: function () {
     return {
       logForm: {
         logs: ''
@@ -32,7 +32,7 @@ export default {
     }
   },
   methods: {
-    getLogs: async function() {
+    getLogs: async function () {
       let isSuccess = true
       try {
         this.logForm.logs = ''
@@ -45,12 +45,10 @@ export default {
       }
       return isSuccess
     },
-    refresh: function() {
-      this.getLogs()
-        ? this.$message.success('刷新成功')
-        : this.$message.error('刷新失败')
+    refresh: async function () {
+      await this.getLogs() ? this.$message.success('刷新成功') : this.$message.error('刷新失败')
     },
-    deleteLogs: async function() {
+    deleteLogs: async function () {
       try {
         await this.$http.post('/syscfg/clearLogs')
         this.logForm.logs = ''

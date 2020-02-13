@@ -128,7 +128,7 @@
 
 <script>
 export default {
-  name: 'sysinfo',
+  name: 'Sysinfo',
   data: function () {
     return {
       sysInfo: {},
