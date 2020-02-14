@@ -60,7 +60,8 @@ export default {
           const result = await this.$http.post('/login', this.loginFromData)
           window.sessionStorage.setItem('token', result.data.token)
           this.$message.success('登录成功!')
-          this.$router.push('/home')
+          let activePath = window.sessionStorage.getItem('activePath')
+          this.$router.push(activePath === '' ? '/home' : activePath)
         } catch (e) {
           this.$message.error('登录失败!')
         }

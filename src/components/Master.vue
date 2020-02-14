@@ -481,7 +481,7 @@ export default {
     }
   },
   watch: {
-    $route() {
+    $route() { // 路由变化引起初始化
       this.init()
     }
   },

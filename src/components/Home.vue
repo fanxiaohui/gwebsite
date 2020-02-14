@@ -28,7 +28,7 @@
             <template slot="title">
               <i class="el-icon-menu"/><span>主站模式</span>
             </template>
-            <el-menu-item index="/modbus/Any" @click="setNavState('/modbus')">
+            <el-menu-item index="/modbus/Any" @click="setNavState('/modbus/Any')">
               <i class="el-icon-eleme"/><span>所有从站</span>
             </el-menu-item>
             <el-menu-item index="/modbus/Ethernet" @click="setNavState('/modbus/Ethernet')">

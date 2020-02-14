@@ -28,7 +28,10 @@ axios.interceptors.response.use(response => {
   console.log(response)
   return response
 }, error => {
-  console.log(error)
+  if (error && error.response.status === 401) {
+    app.$message.warning('未登录,请选登录!')
+    app.$router.push('/login')
+  }
   return Promise.reject(error)
 })
 Vue.prototype.$http = axios
@@ -39,7 +42,7 @@ Vue.prototype.$http = axios
 // Vue.component('font-awesome-layers', FontAwesomeLayers)
 // Vue.component('font-awesome-layers-text', FontAwesomeLayersText)
 
-new Vue({
+var app = new Vue({
   router,
   render: h => h(App)
 }).$mount('#app')
