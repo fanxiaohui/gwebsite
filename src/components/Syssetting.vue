@@ -69,7 +69,9 @@
               <el-form ref="licenceKeyRef" :rules="warrantFormRules"
                        :model="warrantFormData" label-width="100px">
                 <el-form-item label="当前状态:">
-                  <el-input v-model="warrantFormData.hasWarrant" readonly/>
+                  <el-input
+                    v-model="warrantStatus"
+                    readonly/>
                 </el-form-item>
                 <el-form-item label="到期日期:">
                   <el-input v-model="warrantFormData.expiryTime" readonly/>
@@ -83,6 +85,7 @@
                 <el-form-item class="form_btns">
                   <el-button type="primary" round @click="approve">认证</el-button>
                   <el-button type="info" round @click="resetLicenceKey">重置</el-button>
+                  <el-button type="danger" round @click="cancelApprove">取消认证</el-button>
                 </el-form-item>
               </el-form>
             </el-card>
@@ -177,7 +180,7 @@ export default {
         ]
       },
       warrantFormData: {
-        hasWarrant: '',
+        hasWarrant: false,
         expiryTime: '',
         warrant: '',
         licenceKey: ''
@@ -195,6 +198,9 @@ export default {
     }
   },
   computed: {
+    warrantStatus: function () {
+      return this.warrantFormData.hasWarrant ? '已授权' : '未授权'
+    },
     headers: function () {
       return {
         Authorization: 'BEARER ' + window.sessionStorage.getItem('token')
@@ -256,10 +262,7 @@ export default {
           return
         }
 
-        if (
-          this.passwdFormData.newPassword !==
-          this.passwdFormData.confirmPassword
-        ) {
+        if (this.passwdFormData.newPassword !== this.passwdFormData.confirmPassword) {
           this.$message.error('两次输入的新密码不一致!')
           return
         }
@@ -280,9 +283,8 @@ export default {
     getWarrant: async function () {
       try {
         const result = await this.$http.get('/warrant')
-        this.warrantFormData.hasWarrant = result.data.hasWarrant ? '已授权' : '未授权'
-        this.warrantFormData.expiryTime =
-          result.data.expiryTime === '' ? '有效时间24小时' : result.data.expiryTime
+        this.warrantFormData.hasWarrant = result.data.hasWarrant
+        this.warrantFormData.expiryTime = result.data.expiryTime
         this.warrantFormData.warrant = result.data.warrant
       } catch (e) {
         // console.log(e)
@@ -297,17 +299,38 @@ export default {
         }
         this.$message.info('授权中...')
         try {
-          await this.$http.post('/warrant', {
+          await this.$http.post('/warrant', {}, {
             params: {
               licenceKey: this.warrantFormData.licenceKey
             }
           })
           this.$message.success('授权成功')
+          this.resetLicenceKey()
         } catch (e) {
           this.$message.error('授权失败')
         }
         this.getWarrant()
       })
+    },
+    cancelApprove: async function () {
+      if (!this.warrantFormData.hasWarrant) {
+        return
+      }
+      try {
+        await this.$messageBox.confirm(
+          '是否确定取消认证?',
+          '警告',
+          { type: 'warning', center: true }
+        )
+        try {
+          await this.$http.delete('/warrant')
+          this.getWarrant()
+        } catch (e) {
+          // console.log(e)
+        }
+      } catch (e) {
+        this.$message.info('操作取消!')
+      }
     },
     uploadExceed: function (file) {
       this.$message.info('当前限制选择1个文件!!!')
