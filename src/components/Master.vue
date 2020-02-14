@@ -18,8 +18,9 @@
             <el-table-column prop="responseTimeout" label="回复超时" align="center"/>
             <el-table-column label="配置" width="200px" align="center">
               <template slot-scope="scope">
-                <el-button type="primate" @click="editEthernetConfig(scope.row.id)">编辑</el-button>
-                <el-button type="danger" @click="deleteEthernetConfig(scope.row.id)">删除</el-button>
+                <el-button type="danger" @click="deleteEthernetConfig(scope.row.id)">
+                  删除
+                </el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -487,7 +488,7 @@ export default {
   },
   methods: {
     tabPath: function () {
-      return this.isAny ? '所有从站' : this.isEthernet ? '以太网' : this.portName
+      return this.isAny ? '所有从站' : (this.isEthernet ? '以太网' : this.portName)
     },
     init: function () {
       this.portName = this.$route.params.portName
@@ -581,13 +582,10 @@ export default {
     },
     getPortConfig: async function () {
       try {
-        const result = await this.$http.get('/gather/usart', {
-          params: { portName: this.portName }
-        })
-        this.protocolFormData = result.data.configList[0]
+        const result = await this.$http.get('/gather/usart/' + this.portName)
+        this.protocolFormData = result.data
         return true
       } catch (e) {
-        // console.log(e)
         return false
       }
     },
@@ -604,7 +602,7 @@ export default {
           this.protocolFormData.ipAddress + ':' + this.protocolFormData.ipPort
         delete inter['portName']
         try {
-          await this.$http.put('/gather/ethernet', inter)
+          await this.$http.post('/gather/ethernet', inter)
           this.$message.success('添加成功!')
         } catch (e) {
           this.$message.error('添加失败')
@@ -612,7 +610,7 @@ export default {
         this.getEthernetConfig()
       } else {
         try {
-          await this.$http.post('/gather/usart', inter)
+          await this.$http.put('/gather/usart', inter)
           this.$message.success('配置成功!')
         } catch (e) {
           this.$message.error('配置失败')
@@ -632,16 +630,14 @@ export default {
     },
     addEthernetConfig: async function () {
     },
-    editEthernetConfig: async function (id) {
-    },
     deleteEthernetConfig: async function (id) {
       if (this.IPlist.length === 0) {
         this.$message.info('没有什么可以删除!')
         return
       }
-
       try {
-        await this.$http.delete('/gather/ethernet', { data: { id: id } })
+        await this.$http.delete('/gather/ethernet' +
+          (id === 0 ? '' : ('/' + id)))
         this.$message.success('删除成功!')
       } catch (e) {
         this.$message.success('删除失败!')
