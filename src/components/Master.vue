@@ -567,6 +567,7 @@ export default {
           params: this.queryInfo
         })
         this.nodes = result.data.nodeList
+        this.nodesTotal = result.data.total
         // console.log(this.nodes)
       } catch (e) {
         // console.log(e)
