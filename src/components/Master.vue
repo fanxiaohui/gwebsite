@@ -121,9 +121,19 @@
           </template>
         </el-table-column>
       </el-table>
+      <el-pagination
+        background
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="queryInfo.pageNum"
+        :page-sizes="[10, 20, 50, 100, 200]"
+        :page-size="queryInfo.pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="nodesTotal"
+      ></el-pagination>
       <div class="node_btns">
         <el-button type="primary" round v-show="!isAny" @click="showAddNodeDialog">添加从机</el-button>
-        <el-button type="danger" round @click="deleteNode(0)">全部删除</el-button>
+        <el-button type="danger" round @click="deleteAllNodes()">全部删除</el-button>
         <el-button type="info" round @click="hpVisible=true">帮助</el-button>
       </div>
     </el-card>
@@ -428,6 +438,7 @@ export default {
     return {
       portName: 'Any',
       nodes: [], // 从机节点列表
+      nodesTotal: 0,
       IPlist: [], // 当前IP列表,仅网络口有效
       protocolFormData: {
         portName: 'Port1',
@@ -461,6 +472,10 @@ export default {
         inputQuantity: 10,
         inputVirtualAddress: 0,
         inputScanRate: 1000
+      },
+      queryInfo: {
+        pagenum: 1,
+        pagesize: 10
       },
       protocolDialogVisible: false,
       editProtocolDialogVisible: false,
@@ -497,7 +512,7 @@ export default {
       } else if (this.portName !== 'Any') {
         this.getPortConfig()
       }
-      this.getNode()
+      this.getNodes()
     },
     showProtocolDialog: function () {
       if (this.isEthernet) {
@@ -536,12 +551,21 @@ export default {
     hideAddNodeDialog: function () {
       this.addSlaveDialogVisible = false
     },
-    getNode: async function () {
-      let url =
-        '/gather/modbus/node' +
-        (this.portName !== 'Any' ? '?portName=' + this.portName : '')
+    handleSizeChange(newSize) {
+      this.queryInfo.pagesize = newSize
+      this.getNodes()
+    },
+    handleCurrentChange(newPage) {
+      this.queryInfo.pagenum = newPage
+      this.getNodes()
+    },
+    getNodes: async function () {
+      let url = '/gather/modbus/nodes' +
+        (this.portName !== 'Any' ? ('/' + this.portName) : '')
       try {
-        const result = await this.$http.get(url)
+        const result = await this.$http.get(url, {
+          params: this.queryInfo
+        })
         this.nodes = result.data.nodeList
         // console.log(this.nodes)
       } catch (e) {
@@ -550,8 +574,8 @@ export default {
     },
     addNode: async function () {
       try {
-        await this.$http.put('/gather/modbus/node', this.addSlaveFormData)
-        this.getNode()
+        await this.$http.put('/gather/modbus/nodes', this.addSlaveFormData)
+        this.getNodes()
       } catch (e) {
         // console.log(e)
       }
@@ -559,26 +583,29 @@ export default {
     },
     editNode: function () {
     },
-    deleteNode: async function (id) {
-      let del = {}
-
+    deleteAllNodes: async function () {
       if (this.nodes.length === 0) {
         this.$message.info('没有什么可以删除!')
         return
       }
+
       try {
-        if (id < 0) {
-          del.portName = this.portName
-        } else {
-          del.id = id
-        }
-        await this.$http.delete('/gather/modbus/node', { data: del })
-        this.$message.error('删除成功!')
-        this.getNode()
+        await this.$http.delete('/gather/modbus/nodes' +
+        (this.isAny ? '' : ('/type/' + this.portName)))
+        this.$message.success('删除成功!')
       } catch (e) {
         this.$message.error('删除失败!')
-        // console.log(e)
       }
+      this.getNodes()
+    },
+    deleteNode: async function (id) {
+      try {
+        await this.$http.delete('/gather/modbus/nodes/' + id)
+        this.$message.success('删除成功!')
+      } catch (e) {
+        this.$message.error('删除失败!')
+      }
+      this.getNodes()
     },
     getPortConfig: async function () {
       try {
@@ -617,7 +644,7 @@ export default {
         }
         this.getPortConfig()
       }
-      this.getNode()
+      this.getNodes()
       this.protocolDialogVisible = false
     },
     getEthernetConfig: async function () {
@@ -640,10 +667,10 @@ export default {
           (id === 0 ? '' : ('/' + id)))
         this.$message.success('删除成功!')
       } catch (e) {
-        this.$message.success('删除失败!')
+        this.$message.error('删除失败!')
       }
       this.getEthernetConfig()
-      this.getNode()
+      this.getNodes()
     }
   },
   mounted() {
@@ -674,6 +701,11 @@ export default {
       padding: 0;
       text-align: center;
     }
+  }
+
+  .el-pagination {
+    margin-top: 15px;
+    text-align: center;
   }
 
   .node_btns {
