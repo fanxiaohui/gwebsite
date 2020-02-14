@@ -94,7 +94,9 @@ export default {
       }
     },
     refresh: async function () {
-      await this.getUsartConfig() ? this.$message.success('刷新成功') : this.$message.error('刷新失败')
+      await this.getUsartConfig()
+        ? this.$message.success('刷新成功')
+        : this.$message.error('刷新失败')
     }
   },
   created() {

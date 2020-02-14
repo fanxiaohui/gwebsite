@@ -143,7 +143,9 @@ export default {
       let minute = Math.floor(tmpSec / 60) % 60
       let hour = Math.floor(tmpSec / 3600)
 
-      return ((hour > 0) ? (hour + '小时') : '') + (minute > 0 ? (minute + '分') : '') + second + '秒'
+      return ((hour > 0) ? (hour + '小时') : '') +
+        (minute > 0 ? (minute + '分') : '') +
+        second + '秒'
     }
   },
   methods: {

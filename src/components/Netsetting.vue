@@ -10,11 +10,13 @@
       </div>
       <el-row type="flex" justify="center">
         <el-col :xs="22" :sm="20" :md="16" :lg="16" :xl="12">
-          <el-form ref="netFormRef" :model="netForm" :rules="netFormRules" @submit.native.prevent
-                   status-icon label-width="120px">
+          <el-form ref="netFormRef" :model="netForm" :rules="netFormRules"
+                   @submit.native.prevent status-icon label-width="120px">
             <el-form-item prop="auto" label="连接类型">
               <el-switch v-model="netForm.auto"/>
-              <strong class="netTypeShow">{{netForm.auto ? '动态IP': '静态IP'}}</strong>
+              <strong class="netTypeShow">
+                {{netForm.auto ? '动态IP': '静态IP'}}
+              </strong>
             </el-form-item>
             <el-form-item prop="ipAddress" v-if="!netForm.auto" label="IP地址:">
               <el-input v-model="netForm.ipAddress"/>
@@ -73,7 +75,9 @@ export default {
       return isSuccess
     },
     refresh: async function () {
-      await this.getNetconfig() ? this.$message.success('刷新成功') : this.$message.error('刷新失败')
+      await this.getNetconfig()
+        ? this.$message.success('刷新成功')
+        : this.$message.error('刷新失败')
     },
     save: async function () {
       this.$refs.netFormRef.validate(async valid => {

@@ -66,23 +66,19 @@
               <div slot="header" class="clearfix">
                 <span>授权认证</span>
               </div>
-              <el-form
-                ref="licenceKeyRef"
-                :rules="licenceKeyRules"
-                :model="warrantFormData"
-                label-width="100px"
-              >
+              <el-form ref="licenceKeyRef" :rules="warrantFormRules"
+                       :model="warrantFormData" label-width="100px">
                 <el-form-item label="当前状态:">
-                  <el-input v-model="warrantFormData.hasWarrant" readonly />
+                  <el-input v-model="warrantFormData.hasWarrant" readonly/>
                 </el-form-item>
                 <el-form-item label="到期日期:">
-                  <el-input v-model="warrantFormData.expiryTime" readonly />
+                  <el-input v-model="warrantFormData.expiryTime" readonly/>
                 </el-form-item>
                 <el-form-item label="原始码:">
-                  <el-input v-model="warrantFormData.warrant" readonly />
+                  <el-input v-model="warrantFormData.warrant" readonly/>
                 </el-form-item>
                 <el-form-item label="授权码:" required prop="licenceKey">
-                  <el-input v-model="warrantFormData.licenceKey" />
+                  <el-input v-model="warrantFormData.licenceKey"/>
                 </el-form-item>
                 <el-form-item class="form_btns">
                   <el-button type="primary" round @click="approve">认证</el-button>
@@ -100,13 +96,9 @@
                 <span>重启设备-恢复出厂设置</span>
               </div>
               <el-button type="danger" round @click="reboot">重启网关</el-button>
-              <el-button type="danger" round @click="resoft">重启软件</el-button>
-              <el-tooltip
-                class="item"
-                effect="dark"
-                content="本操作 将清空所有数据并设置IP和密码为默认!!!"
-                placement="top-start"
-              >
+              <el-button type="danger" round @click="softReboot">重启软件</el-button>
+              <el-tooltip class="item" effect="dark"
+                          content="本操作 将清空所有数据并设置IP和密码为默认!!!" placement="top-start">
                 <el-button type="danger" round @click="factory">恢复出厂设置</el-button>
               </el-tooltip>
             </el-card>
@@ -120,21 +112,21 @@
               <el-upload
                 ref="upload"
                 accept=".bz2"
+                name="firmware"
+                :limit="1"
+                :auto-upload="false"
                 :action="uploadUrl"
                 :headers="headers"
                 :data="exceedData"
-                :limit="1"
-                :auto-upload="false"
-                name="firmware"
                 :on-exceed="uploadExceed"
                 :on-change="uploadChange"
                 :on-remove="uploadRemove"
                 :before-upload="uploadBefore"
                 :on-success="uploadSuccess"
-                :on-error="uploadError"
-              >
+                :on-error="uploadError">
                 <el-button slot="trigger" type="primary">选取文件</el-button>
-                <el-button style="margin-left: 10px;" type="success" @click="uploadSubmit">开始更新</el-button>
+                <el-button style="margin-left: 10px;" type="success" @click="uploadSubmit">开始更新
+                </el-button>
                 <div>
                   <strong>MD5:</strong>
                   <strong v-text="exceedData.md5"></strong>
@@ -146,7 +138,7 @@
         </el-row>
       </div>
       <div v-show="isUpload">
-        <strong>程序更新中...,请勿关闭网关电源和刷新本页面!!!</strong>
+        <strong>重启中...请稍等!!!</strong>
         <el-progress :text-inside="true" :stroke-width="30" :percentage="upgradeRate"></el-progress>
       </div>
     </el-card>
@@ -158,7 +150,7 @@ import SparkMD5 from 'spark-md5'
 
 export default {
   name: 'Syssetting',
-  data: function() {
+  data: function () {
     return {
       passwdFormData: {
         username: 'admin',
@@ -190,7 +182,7 @@ export default {
         warrant: '',
         licenceKey: ''
       },
-      licenceKeyRules: {
+      warrantFormRules: {
         licenceKey: [
           { required: true, message: '请输入有效授权码', trigger: 'blur' }
         ]
@@ -203,17 +195,17 @@ export default {
     }
   },
   computed: {
-    headers: function() {
+    headers: function () {
       return {
         Authorization: 'BEARER ' + window.sessionStorage.getItem('token')
       }
     },
-    uploadUrl: function() {
+    uploadUrl: function () {
       return this.$http.defaults.baseURL + '/upgrade'
     }
   },
   methods: {
-    rebootAction: async function(message, url) {
+    rebootAction: async function (message, url) {
       try {
         await this.$messageBox.confirm(message, '警告', {
           type: 'warning',
@@ -221,6 +213,7 @@ export default {
         })
         try {
           await this.$http.post(url)
+          this.rebootProgress()
           this.$message.warning('重启中...')
         } catch (e) {
           this.$message.warning('重启失败')
@@ -229,13 +222,13 @@ export default {
         this.$message.info('取消操作')
       }
     },
-    reboot: function() {
+    reboot: function () {
       this.rebootAction('确认重启网关?', '/syscfg/reboot')
     },
-    resoft: function() {
+    softReboot: function () {
       this.rebootAction('确认重启软件?', '/syscfg/exec')
     },
-    factory: async function() {
+    factory: async function () {
       try {
         await this.$messageBox.confirm(
           '恢复出厂设置操作,将清除所有数据,并将IP与密码将会恢复至默认? - IP地址重启生效!!!',
@@ -253,25 +246,49 @@ export default {
         this.$message.info('取消操作')
       }
     },
-    resetPasswdInfo: function() {
+    resetPasswdInfo: function () {
       this.$refs.passwdFormRef.resetFields()
     },
-    passwd: function() {
+    passwd: function () {
       this.$refs.passwdFormRef.validate(async valid => {
         if (!valid) {
           this.$message.error('输入不正确,请重新输入!')
-          this.resetPasswdInfo()
           return
         }
+
+        if (
+          this.passwdFormData.newPassword !==
+          this.passwdFormData.confirmPassword
+        ) {
+          this.$message.error('两次输入的新密码不一致!')
+          return
+        }
+
         try {
           await this.$http.post('/passwd', this.passwdFormData)
-          this.$message.success('修改密码成功!请重启!!')
+          this.$message.success('修改密码成功!请重新登录')
+          window.sessionStorage.clear()
+          this.$router.push('/login')
         } catch (e) {
           this.$message.warning('修改密码失败!')
         }
       })
     },
-    approve: async function() {
+    resetLicenceKey: function () {
+      this.$refs.licenceKeyRef.resetFields()
+    },
+    getWarrant: async function () {
+      try {
+        const result = await this.$http.get('/warrant')
+        this.warrantFormData.hasWarrant = result.data.hasWarrant ? '已授权' : '未授权'
+        this.warrantFormData.expiryTime =
+          result.data.expiryTime === '' ? '有效时间24小时' : result.data.expiryTime
+        this.warrantFormData.warrant = result.data.warrant
+      } catch (e) {
+        // console.log(e)
+      }
+    },
+    approve: async function () {
       this.$refs.licenceKeyRef.validate(async valid => {
         if (!valid) {
           this.$message.error('授权码输入不正确,请重新输入!')
@@ -292,25 +309,10 @@ export default {
         this.getWarrant()
       })
     },
-    resetLicenceKey: function() {
-      this.$refs.licenceKeyRef.resetFields()
-    },
-    getWarrant: async function() {
-      try {
-        const result = await this.$http.get('/warrant')
-        this.warrantFormData.hasWarrant = result.data.hasWarrant
-          ? '已授权'
-          : '未授权'
-        this.warrantFormData.expiryTime = result.data.expiryTime
-        this.warrantFormData.warrant = result.data.warrant
-      } catch (e) {
-        // console.log(e)
-      }
-    },
-    uploadExceed: function(file) {
+    uploadExceed: function (file) {
       this.$message.info('当前限制选择1个文件!!!')
     },
-    uploadChange: function(file) {
+    uploadChange: function (file) {
       let filename = file.name
       let fileExt = /[.]/.exec(filename)
         ? /[^.]+$/.exec(filename.toLowerCase())
@@ -341,7 +343,7 @@ export default {
       var spark = new SparkMD5()
 
       this.exceedData.md5 = ''
-      fileReader.onload = function(e) {
+      fileReader.onload = function (e) {
         spark.appendBinary(e.target.result)
         currentChunk++
         if (currentChunk < chunks) {
@@ -363,19 +365,28 @@ export default {
       loadNext()
       return true
     },
-    uploadBefore: function(file) {
+    uploadBefore: function (file) {
       if (this.exceedData.md5 === '') {
         this.$message.error('内部错误,文件无效md5值!!!')
         return false
       }
       return true
     },
-    uploadRemove: function() {
+    uploadRemove: function () {
       this.exceedData.md5 = ''
     },
-    uploadSuccess: function(response, file) {
+    uploadSuccess: function (response, file) {
       this.$refs.upload.clearFiles()
       this.$message.success('上传成功,开始更新固件')
+      this.rebootProgress()
+    },
+    uploadError: function (rerr, file) {
+      this.$message.error('上传失败,请重试')
+    },
+    uploadSubmit: function () {
+      this.$refs.upload.submit()
+    },
+    rebootProgress: function () {
       this.upgradeRate = 0
       this.isUpload = true
 
@@ -391,12 +402,6 @@ export default {
           _this.$router.push('/login')
         }
       }
-    },
-    uploadError: function(rerr, file) {
-      this.$message.error('上传失败,请重试')
-    },
-    uploadSubmit: function() {
-      this.$refs.upload.submit()
     }
   },
   created() {
