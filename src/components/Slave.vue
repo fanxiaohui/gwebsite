@@ -142,7 +142,6 @@ export default {
       try {
         const result = await this.$http.get('/modbus/bindInterfaces')
         this.bindInterList = result.data.bindInterface
-        // console.log(this.bindInterList)
       } catch (e) {
         // console.log(e)
       }
@@ -152,7 +151,7 @@ export default {
         const result = await this.$http.get('/modbus/slaves', {
           params: this.queryInfo
         })
-        this.nodes = result.data.slaveNode
+        this.nodes = result.data.list
         this.total = result.data.total
         // console.log(result.data)
       } catch (e) {

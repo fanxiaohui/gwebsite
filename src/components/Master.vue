@@ -117,7 +117,7 @@
         </el-table-column>
         <el-table-column label="配置" width="200px" align="center">
           <template slot-scope="scope">
-            <el-button type="primate" @click="editNode(scope.row.id)">编辑</el-button>
+            <el-button type="primate" @click="showEditNodeDialog(scope.row)">编辑</el-button>
             <el-button type="danger" @click="deleteNode(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
@@ -175,249 +175,156 @@
       </span>
     </el-dialog>
     <!-- 添加从机地址 -->
-    <el-dialog :title="tabPath()" :visible.sync="addNodeDialogVisible" center width="800px">
+    <el-dialog title="添加从机节点" :visible.sync="addNodeDialogVisible" center width="800px">
       <el-card>
         <el-row>
-          <el-form
-            ref="addSlaveFormRef"
-            :model="addNodeFormData"
-            label-width="100px"
-            class="gather_box"
-          >
+          <el-form ref="addNodeFormRef" :model="addNodeFormData"
+                   label-width="100px" class="gather_box">
             <el-col :span="24">
-              <el-form-item v-if="isEthernet" label="从站IP:">
-                <el-select v-model="addNodeFormData.ipAddress" class="interWidth">
-                  <el-option v-for="item in IPList" :key="item.ipAddress" :value="item.ipAddress"/>
-                </el-select>
+              <el-form-item label="接口:">
+                <el-input :value="protocolFormData.portName"
+                          class="interWidth" disabled/>
               </el-form-item>
-              <div v-if="!isEthernet">
-                <el-form-item label="接口:">
-                  <el-input :value="protocolFormData.portName" class="interWidth" disabled/>
+              <div v-if="isEthernet">
+                <el-form-item v-show="isEthernet" label="从站IP:">
+                  <el-select v-model="addNodeFormData.ipAddress" class="interWidth">
+                    <el-option v-for="item in IPList" :key="item.ipAddress"
+                               :value="item.ipAddress"/>
+                  </el-select>
                 </el-form-item>
+              </div>
+              <div v-else>
                 <el-form-item label="协议类型:">
-                  <el-input
-                    v-if="protocolFormData.feature==='none'"
-                    value="None"
-                    class="interWidth"
-                    disabled
-                  />
-                  <el-input
-                    v-if="protocolFormData.feature==='mbrtu'"
-                    value="MODBUS-RTU"
-                    class="interWidth"
-                    disabled
-                  />
-                  <el-input
-                    v-else-if="protocolFormData.feature==='mbascii'"
-                    value="MODBUS-ASCII"
-                    class="interWidth"
-                    disabled
-                  />
-                  <el-input
-                    v-else-if="protocolFormData.feature==='mbtcp'"
-                    value="MODBUS-TCP"
-                    class="interWidth"
-                    disabled
-                  />
+                  <el-input v-if="protocolFormData.feature==='none'"
+                            value="None" class="interWidth" disabled/>
+                  <el-input v-else-if="protocolFormData.feature==='mbrtu'"
+                            value="MODBUS-RTU" class="interWidth" disabled/>
+                  <el-input v-else-if="protocolFormData.feature==='mbascii'"
+                            value="MODBUS-ASCII" class="interWidth" disabled/>
+                  <el-input v-else-if="protocolFormData.feature==='mbtcp'"
+                            value="MODBUS-TCP" class="interWidth" disabled/>
                   <el-input v-else value="None" class="interWidth" disabled/>
                 </el-form-item>
                 <el-form-item label="命令延时(ms):">
-                  <el-input :value="protocolFormData.delayPoll" class="interWidth" disabled/>
+                  <el-input :value="protocolFormData.delayPoll"
+                            class="interWidth" disabled/>
                 </el-form-item>
                 <el-form-item label="回复超时(ms):">
-                  <el-input :value="protocolFormData.responseTimeout" class="interWidth" disabled/>
+                  <el-input :value="protocolFormData.responseTimeout"
+                            class="interWidth" disabled/>
                 </el-form-item>
               </div>
               <el-form-item label="从机地址:" prop="slaveID">
-                <el-input
-                  type="number"
-                  v-model.number="addNodeFormData.slaveID"
-                  class="interWidth"
-                />
+                <el-input type="number" v-model.number="addNodeFormData.slaveID"
+                          class="interWidth"/>
               </el-form-item>
             </el-col>
             <!-- coil-->
             <el-col :span="12">
               <el-form-item label="是否使能:" prop="hasCoil">
-                <el-switch
-                  v-model="addNodeFormData.hasCoil"
-                  active-color="#13ce66"
-                  inactive-color="#ff4949"
-                />
+                <el-switch v-model="addNodeFormData.hasCoil"
+                           active-color="#13ce66" inactive-color="#ff4949"/>
                 <strong>{{addNodeFormData.hasCoil ? '已使能': '已失能'}}</strong>
               </el-form-item>
               <el-form-item label="功能码:">
                 <el-input value="[1]Read Coils" class="interWidth" disabled/>
               </el-form-item>
               <el-form-item label="数据地址:" prop="coilAddress">
-                <el-input
-                  type="number"
-                  v-model.number="addNodeFormData.coilAddress"
-                  :disabled="!addNodeFormData.hasCoil"
-                  class="interWidth"
-                />
+                <el-input type="number" v-model.number="addNodeFormData.coilAddress"
+                          :disabled="!addNodeFormData.hasCoil" class="interWidth"/>
               </el-form-item>
               <el-form-item label="数量:" prop="coilQuantity">
-                <el-input
-                  type="number"
-                  v-model.number="addNodeFormData.coilQuantity"
-                  :disabled="!addNodeFormData.hasCoil"
-                  class="interWidth"
-                />
+                <el-input type="number" v-model.number="addNodeFormData.coilQuantity"
+                          :disabled="!addNodeFormData.hasCoil" class="interWidth"/>
               </el-form-item>
               <el-form-item label="虚拟地址:" prop="coilVirtualAddress">
-                <el-input
-                  type="number"
-                  v-model.number="addNodeFormData.coilVirtualAddress"
-                  :disabled="!addNodeFormData.hasCoil"
-                  class="interWidth"
-                />
+                <el-input type="number" v-model.number="addNodeFormData.coilVirtualAddress"
+                          :disabled="!addNodeFormData.hasCoil" class="interWidth"/>
               </el-form-item>
               <el-form-item label="扫描周期(ms):" prop="coilScanRate">
-                <el-input
-                  type="number"
-                  v-model.number="addNodeFormData.coilScanRate"
-                  :disabled="!addNodeFormData.hasCoil"
-                  class="interWidth"
-                />
+                <el-input type="number" v-model.number="addNodeFormData.coilScanRate"
+                          :disabled="!addNodeFormData.hasCoil" class="interWidth"/>
               </el-form-item>
             </el-col>
             <!-- discrete -->
             <el-col :span="12">
               <el-form-item label="是否使能:" prop="hasDiscrete">
-                <el-switch
-                  v-model="addNodeFormData.hasDiscrete"
-                  active-color="#13ce66"
-                  inactive-color="#ff4949"
-                />
+                <el-switch v-model="addNodeFormData.hasDiscrete"
+                           active-color="#13ce66" inactive-color="#ff4949"/>
                 <strong>{{addNodeFormData.hasDiscrete ? '已使能': '已失能'}}</strong>
               </el-form-item>
               <el-form-item label="功能码:">
                 <el-input value="[2]Read Discrete Inputs" class="interWidth" disabled/>
               </el-form-item>
               <el-form-item label="数据地址:" prop="discretdeleteEthernetConfigeAddress">
-                <el-input
-                  type="number"
-                  v-model.number="addNodeFormData.discreteAddress"
-                  :disabled="!addNodeFormData.hasDiscrete"
-                  class="interWidth"
-                />
+                <el-input type="number" v-model.number="addNodeFormData.discreteAddress"
+                          :disabled="!addNodeFormData.hasDiscrete" class="interWidth"/>
               </el-form-item>
               <el-form-item label="数量:" prop="discreteQuantity">
-                <el-input
-                  type="number"
-                  v-model.number="addNodeFormData.discreteQuantity"
-                  :disabled="!addNodeFormData.hasDiscrete"
-                  class="interWidth"
-                />
+                <el-input type="number" v-model.number="addNodeFormData.discreteQuantity"
+                          :disabled="!addNodeFormData.hasDiscrete" class="interWidth"/>
               </el-form-item>
               <el-form-item label="虚拟地址:" prop="discreteVirtualAddress">
-                <el-input
-                  type="number"
-                  v-model.number="addNodeFormData.discreteVirtualAddress"
-                  :disabled="!addNodeFormData.hasDiscrete"
-                  class="interWidth"
-                />
+                <el-input type="number" v-model.number="addNodeFormData.discreteVirtualAddress"
+                          :disabled="!addNodeFormData.hasDiscrete" class="interWidth"/>
               </el-form-item>
               <el-form-item label="扫描周期(ms):" prop="discreteScanRate">
-                <el-input
-                  type="number"
-                  v-model.number="addNodeFormData.discreteScanRate"
-                  :disabled="!addNodeFormData.hasDiscrete"
-                  class="interWidth"
-                />
+                <el-input type="number" v-model.number="addNodeFormData.discreteScanRate"
+                          :disabled="!addNodeFormData.hasDiscrete" class="interWidth"/>
               </el-form-item>
             </el-col>
             <!-- holding register -->
             <el-col :span="12">
               <el-form-item label="是否使能:" prop="hasHolding">
-                <el-switch
-                  v-model="addNodeFormData.hasHolding"
-                  active-color="#13ce66"
-                  inactive-color="#ff4949"
-                />
+                <el-switch v-model="addNodeFormData.hasHolding"
+                           active-color="#13ce66" inactive-color="#ff4949"/>
                 <strong>{{addNodeFormData.hasHolding ? '已使能': '已失能'}}</strong>
               </el-form-item>
               <el-form-item label="功能码:">
                 <el-input value="[3]Read Holding Registers" class="interWidth" disabled/>
               </el-form-item>
               <el-form-item label="数据地址:" prop="holdingAddress">
-                <el-input
-                  type="number"
-                  v-model.number="addNodeFormData.holdingAddress"
-                  :disabled="!addNodeFormData.hasHolding"
-                  class="interWidth"
-                />
+                <el-input type="number" v-model.number="addNodeFormData.holdingAddress"
+                          :disabled="!addNodeFormData.hasHolding" class="interWidth"/>
               </el-form-item>
               <el-form-item label="数量:" prop="holdingQuantity">
-                <el-input
-                  type="number"
-                  v-model.number="addNodeFormData.holdingQuantity"
-                  :disabled="!addNodeFormData.hasHolding"
-                  class="interWidth"
-                />
+                <el-input type="number" v-model.number="addNodeFormData.holdingQuantity"
+                          :disabled="!addNodeFormData.hasHolding" class="interWidth"/>
               </el-form-item>
               <el-form-item label="虚拟地址:" prop="holdingVirtualAddress">
-                <el-input
-                  type="number"
-                  v-model.number="addNodeFormData.holdingVirtualAddress"
-                  :disabled="!addNodeFormData.hasHolding"
-                  class="interWidth"
-                />
+                <el-input type="number" v-model.number="addNodeFormData.holdingVirtualAddress"
+                          :disabled="!addNodeFormData.hasHolding" class="interWidth"/>
               </el-form-item>
               <el-form-item label="扫描周期(ms):" prop="holdingScanRate">
-                <el-input
-                  type="number"
-                  v-model.number="addNodeFormData.holdingScanRate"
-                  :disabled="!addNodeFormData.hasHolding"
-                  class="interWidth"
-                />
+                <el-input type="number" v-model.number="addNodeFormData.holdingScanRate"
+                          :disabled="!addNodeFormData.hasHolding" class="interWidth"/>
               </el-form-item>
             </el-col>
             <!-- input register -->
             <el-col :span="12">
               <el-form-item label="是否使能:" prop="hasInput">
-                <el-switch
-                  v-model="addNodeFormData.hasInput"
-                  active-color="#13ce66"
-                  inactive-color="#ff4949"
-                />
+                <el-switch v-model="addNodeFormData.hasInput"
+                           active-color="#13ce66" inactive-color="#ff4949"/>
                 <strong>{{addNodeFormData.hasInput ? '已使能': '已失能'}}</strong>
               </el-form-item>
               <el-form-item label="功能码:">
                 <el-input value="[4]Read Input Registers" class="interWidth" disabled/>
               </el-form-item>
               <el-form-item label="数据地址:" prop="inputAddress">
-                <el-input
-                  type="number"
-                  v-model.number="addNodeFormData.inputAddress"
-                  :disabled="!addNodeFormData.hasInput"
-                  class="interWidth"
-                />
+                <el-input type="number" v-model.number="addNodeFormData.inputAddress"
+                          :disabled="!addNodeFormData.hasInput" class="interWidth"/>
               </el-form-item>
               <el-form-item label="数量:" prop="inputQuantity">
-                <el-input
-                  type="number"
-                  v-model.number="addNodeFormData.inputQuantity"
-                  :disabled="!addNodeFormData.hasInput"
-                  class="interWidth"
-                />
+                <el-input type="number" v-model.number="addNodeFormData.inputQuantity"
+                          :disabled="!addNodeFormData.hasInput" class="interWidth"/>
               </el-form-item>
               <el-form-item label="虚拟地址:" prop="inputVirtualAddress">
-                <el-input
-                  type="number"
-                  v-model.number="addNodeFormData.inputVirtualAddress"
-                  :disabled="!addNodeFormData.hasInput"
-                  class="interWidth"
-                />
+                <el-input type="number" v-model.number="addNodeFormData.inputVirtualAddress"
+                          :disabled="!addNodeFormData.hasInput" class="interWidth"/>
               </el-form-item>
               <el-form-item label="扫描周期(ms):" prop="inputScanRate">
-                <el-input
-                  type="number"
-                  v-model.number="addNodeFormData.inputScanRate"
-                  :disabled="!addNodeFormData.hasInput"
-                  class="interWidth"
-                />
+                <el-input type="number" v-model.number="addNodeFormData.inputScanRate"
+                          :disabled="!addNodeFormData.hasInput" class="interWidth"/>
               </el-form-item>
             </el-col>
           </el-form>
@@ -425,6 +332,144 @@
         <div class="gather_btns">
           <el-button type="primary" round @click="addNode">确定</el-button>
           <el-button type="info" round @click="hideAddNodeDialog">取消</el-button>
+          <el-button type="info" round @click="hpVisible=true">帮助</el-button>
+        </div>
+      </el-card>
+    </el-dialog>
+
+    <!-- 编辑从机地址 -->
+    <el-dialog title="编辑从机节点" :visible.sync="editNodeDialogVisible" center width="800px">
+      <el-card>
+        <el-row>
+          <el-form ref="editNodeFormRef" :model="editNodeFormData"
+                   label-width="100px" class="gather_box">
+            <el-col :span="24">
+              <el-form-item label="接口:">
+                <el-input :value="editNodeFormData.portName"
+                          class="interWidth" disabled/>
+              </el-form-item>
+              <el-form-item v-show="editNodeFormData.portName==='Ethernet'" label="从站IP:">
+                <el-input :value="editNodeFormData.ipAddress"
+                          class="interWidth" disabled/>
+              </el-form-item>
+              <el-form-item label="从机地址:" prop="slaveID">
+                <el-input type="number" v-model.number="editNodeFormData.slaveID"
+                          class="interWidth" disabled/>
+              </el-form-item>
+            </el-col>
+            <!-- coil-->
+            <el-col :span="12">
+              <el-form-item label="是否使能:" prop="hasCoil">
+                <el-switch v-model="editNodeFormData.hasCoil"
+                           active-color="#13ce66" inactive-color="#ff4949"/>
+                <strong>{{editNodeFormData.hasCoil ? '已使能': '已失能'}}</strong>
+              </el-form-item>
+              <el-form-item label="功能码:">
+                <el-input value="[1]Read Coils" class="interWidth" disabled/>
+              </el-form-item>
+              <el-form-item label="数据地址:" prop="coilAddress">
+                <el-input type="number" v-model.number="editNodeFormData.coilAddress"
+                          class="interWidth" :disabled="!editNodeFormData.hasCoil"/>
+              </el-form-item>
+              <el-form-item label="数量:" prop="coilQuantity">
+                <el-input type="number" v-model.number="editNodeFormData.coilQuantity"
+                          class="interWidth" :disabled="!editNodeFormData.hasCoil"/>
+              </el-form-item>
+              <el-form-item label="虚拟地址:" prop="coilVirtualAddress">
+                <el-input type="number" v-model.number="editNodeFormData.coilVirtualAddress"
+                          class="interWidth" :disabled="!editNodeFormData.hasCoil"/>
+              </el-form-item>
+              <el-form-item label="扫描周期(ms):" prop="coilScanRate">
+                <el-input type="number" v-model.number="editNodeFormData.coilScanRate"
+                          class="interWidth" :disabled="!editNodeFormData.hasCoil"/>
+              </el-form-item>
+            </el-col>
+            <!-- discrete -->
+            <el-col :span="12">
+              <el-form-item label="是否使能:" prop="hasDiscrete">
+                <el-switch v-model="editNodeFormData.hasDiscrete"
+                           active-color="#13ce66" inactive-color="#ff4949"/>
+                <strong>{{editNodeFormData.hasDiscrete ? '已使能': '已失能'}}</strong>
+              </el-form-item>
+              <el-form-item label="功能码:">
+                <el-input value="[2]Read Discrete Inputs" class="interWidth" disabled/>
+              </el-form-item>
+              <el-form-item label="数据地址:" prop="discretdeleteEthernetConfigeAddress">
+                <el-input type="number" v-model.number="editNodeFormData.discreteAddress"
+                          class="interWidth" :disabled="!editNodeFormData.hasDiscrete"/>
+              </el-form-item>
+              <el-form-item label="数量:" prop="discreteQuantity">
+                <el-input type="number" v-model.number="editNodeFormData.discreteQuantity"
+                          class="interWidth" :disabled="!editNodeFormData.hasDiscrete"/>
+              </el-form-item>
+              <el-form-item label="虚拟地址:" prop="discreteVirtualAddress">
+                <el-input type="number" v-model.number="editNodeFormData.discreteVirtualAddress"
+                          class="interWidth" :disabled="!editNodeFormData.hasDiscrete"/>
+              </el-form-item>
+              <el-form-item label="扫描周期(ms):" prop="discreteScanRate">
+                <el-input type="number" v-model.number="editNodeFormData.discreteScanRate"
+                          class="interWidth" :disabled="!editNodeFormData.hasDiscrete"/>
+              </el-form-item>
+            </el-col>
+            <!-- holding register -->
+            <el-col :span="12">
+              <el-form-item label="是否使能:" prop="hasHolding">
+                <el-switch v-model="editNodeFormData.hasHolding"
+                           active-color="#13ce66" inactive-color="#ff4949"/>
+                <strong>{{editNodeFormData.hasHolding ? '已使能': '已失能'}}</strong>
+              </el-form-item>
+              <el-form-item label="功能码:">
+                <el-input value="[3]Read Holding Registers" class="interWidth" disabled/>
+              </el-form-item>
+              <el-form-item label="数据地址:" prop="holdingAddress">
+                <el-input type="number" v-model.number="editNodeFormData.holdingAddress"
+                          class="interWidth" :disabled="!editNodeFormData.hasHolding"/>
+              </el-form-item>
+              <el-form-item label="数量:" prop="holdingQuantity">
+                <el-input type="number" v-model.number="editNodeFormData.holdingQuantity"
+                          class="interWidth" :disabled="!editNodeFormData.hasHolding"/>
+              </el-form-item>
+              <el-form-item label="虚拟地址:" prop="holdingVirtualAddress">
+                <el-input type="number" v-model.number="editNodeFormData.holdingVirtualAddress"
+                          class="interWidth" :disabled="!editNodeFormData.hasHolding"/>
+              </el-form-item>
+              <el-form-item label="扫描周期(ms):" prop="holdingScanRate">
+                <el-input type="number" v-model.number="editNodeFormData.holdingScanRate"
+                          class="interWidth" :disabled="!editNodeFormData.hasHolding"/>
+              </el-form-item>
+            </el-col>
+            <!-- input register -->
+            <el-col :span="12">
+              <el-form-item label="是否使能:" prop="hasInput">
+                <el-switch v-model="editNodeFormData.hasInput"
+                           active-color="#13ce66" inactive-color="#ff4949"/>
+                <strong>{{editNodeFormData.hasInput ? '已使能': '已失能'}}</strong>
+              </el-form-item>
+              <el-form-item label="功能码:">
+                <el-input value="[4]Read Input Registers" class="interWidth" disabled/>
+              </el-form-item>
+              <el-form-item label="数据地址:" prop="inputAddress">
+                <el-input type="number" v-model.number="editNodeFormData.inputAddress"
+                          class="interWidth" :disabled="!editNodeFormData.hasInput"/>
+              </el-form-item>
+              <el-form-item label="数量:" prop="inputQuantity">
+                <el-input type="number" v-model.number="editNodeFormData.inputQuantity"
+                          class="interWidth" :disabled="!editNodeFormData.hasInput"/>
+              </el-form-item>
+              <el-form-item label="虚拟地址:" prop="inputVirtualAddress">
+                <el-input type="number" v-model.number="editNodeFormData.inputVirtualAddress"
+                          class="interWidth" :disabled="!editNodeFormData.hasInput"/>
+              </el-form-item>
+              <el-form-item label="扫描周期(ms):" prop="inputScanRate">
+                <el-input type="number" v-model.number="editNodeFormData.inputScanRate"
+                          class="interWidth" :disabled="!editNodeFormData.hasInput"/>
+              </el-form-item>
+            </el-col>
+          </el-form>
+        </el-row>
+        <div class="gather_btns">
+          <el-button type="primary" round @click="editNode">确定</el-button>
+          <el-button type="info" round @click="hideEditNodeDialog">取消</el-button>
           <el-button type="info" round @click="hpVisible=true">帮助</el-button>
         </div>
       </el-card>
@@ -480,6 +525,7 @@ export default {
         inputVirtualAddress: 0,
         inputScanRate: 1000
       },
+      editNodeFormData: {},
       queryInfo: {
         pagenum: 1,
         pagesize: 10
@@ -491,11 +537,6 @@ export default {
     }
   },
   computed: {
-    ipAddrPort: function () {
-      return (
-        this.protocolFormData.ipAddress + ':' + this.protocolFormData.ipPort
-      )
-    },
     isEthernet: function () {
       return this.portName === 'Ethernet'
     },
@@ -524,6 +565,7 @@ export default {
     showProtocolDialog: function () {
       if (this.isEthernet) {
         this.protocolFormData.portName = 'Ethernet'
+        this.protocolFormData.feature = 'mbtcp'
       } else {
         this.protocolFormData.portName = this.usartProtocolData.portName
         this.protocolFormData.feature = this.usartProtocolData.feature
@@ -535,27 +577,33 @@ export default {
     hideProtocolDialog: function () {
       this.protocolDialogVisible = false
     },
-    showEditNodeDialog: function () {
-      this.editNodeDialogVisible = true
-    },
-    hideEditNodeDialog: function () {
-      this.editNodeDialogVisible = false
-    },
     showAddNodeDialog: function () {
       if (this.isAny) {
         return
-      }
-      if (this.isEthernet) {
+      } else if (this.isEthernet) {
+        this.protocolFormData.portName = 'Ethernet'
         this.addNodeFormData.ipAddress = ''
       } else if (this.usartProtocolData.feature === 'none') {
         this.$message.error('未使能相关协议!!! 请先配置!')
         return
+      } else {
+        this.protocolFormData.portName = this.usartProtocolData.portName
+        this.protocolFormData.feature = this.usartProtocolData.feature
+        this.protocolFormData.delayPoll = this.usartProtocolData.delayPoll
+        this.protocolFormData.responseTimeout = this.usartProtocolData.responseTimeout
       }
       this.addNodeFormData.portName = this.portName
       this.addNodeDialogVisible = true
     },
     hideAddNodeDialog: function () {
       this.addNodeDialogVisible = false
+    },
+    showEditNodeDialog: function (node) {
+      this.editNodeFormData = Object.assign({}, node)
+      this.editNodeDialogVisible = true
+    },
+    hideEditNodeDialog: function () {
+      this.editNodeDialogVisible = false
     },
     handleSizeChange(newSize) {
       this.queryInfo.pagesize = newSize
@@ -565,9 +613,27 @@ export default {
       this.queryInfo.pagenum = newPage
       this.getNodes()
     },
+    confirmProtocol: async function () {
+      let inter = {
+        feature: this.protocolFormData.feature,
+        responseTimeout: this.protocolFormData.responseTimeout,
+        delayPoll: this.protocolFormData.delayPoll
+      }
+
+      if (this.isEthernet) {
+        inter.ipAddress = this.protocolFormData.ipAddress +
+          ':' + this.protocolFormData.ipPort
+        await this.addEthernetConfig(inter)
+      } else {
+        inter.portName = this.protocolFormData.portName
+        await this.modifyPortConfig(inter)
+      }
+      this.getNodes()
+      this.protocolDialogVisible = false
+    },
     getNodes: async function () {
       let url = '/gather/modbus/nodes' +
-        (this.portName !== 'Any' ? ('/' + this.portName) : '')
+        (this.portName !== 'Any' ? ('/type/' + this.portName) : '')
       try {
         const result = await this.$http.get(url, {
           params: this.queryInfo
@@ -579,15 +645,31 @@ export default {
       }
     },
     addNode: async function () {
+      if (this.isEthernet && this.addNodeFormData.ipAddress === '') {
+        this.$message.warning('请选择对应的从站ip地址!')
+        return
+      }
       try {
-        await this.$http.put('/gather/modbus/nodes', this.addNodeFormData)
+        await this.$http.post('/gather/modbus/nodes', this.addNodeFormData)
         this.getNodes()
       } catch (e) {
         // console.log(e)
       }
       this.addNodeDialogVisible = false
     },
-    editNode: function () {
+    editNode: async function () {
+      if (this.editNodeFormData.id === 0) {
+        this.editNodeDialogVisible = false
+        return
+      }
+
+      try {
+        await this.$http.put('/gather/modbus/nodes', this.editNodeFormData)
+      } catch (e) {
+        console.log(e)
+      }
+      this.getNodes()
+      this.editNodeDialogVisible = false
     },
     deleteAllNodes: async function () {
       if (this.nodesList.length === 0) {
@@ -596,22 +678,42 @@ export default {
       }
 
       try {
-        await this.$http.delete('/gather/modbus/nodes' +
-          (this.isAny ? '' : ('/type/' + this.portName)))
-        this.$message.success('删除成功!')
+        await this.$messageBox.confirm('是否确定删除所有节点?',
+          '警告',
+          { type: 'warning' }
+        )
+        try {
+          await this.$http.delete('/gather/modbus/nodes' +
+            (this.isAny ? '' : ('/type/' + this.portName)))
+          this.$message.success('删除成功!')
+        } catch (e) {
+          this.$message.error('删除失败!')
+        }
+        this.getNodes()
       } catch (e) {
-        this.$message.error('删除失败!')
+        this.$message.info('操作取消.')
       }
-      this.getNodes()
     },
     deleteNode: async function (id) {
-      try {
-        await this.$http.delete('/gather/modbus/nodes/' + id)
-        this.$message.success('删除成功!')
-      } catch (e) {
-        this.$message.error('删除失败!')
+      if (id === 0) {
+        return
       }
-      this.getNodes()
+
+      try {
+        await this.$messageBox.confirm('是否确定删除所有节点?',
+          '警告',
+          { type: 'warning' }
+        )
+        try {
+          await this.$http.delete('/gather/modbus/nodes/' + id)
+          this.$message.success('删除成功!')
+        } catch (e) {
+          this.$message.error('删除失败!')
+        }
+        this.getNodes()
+      } catch (e) {
+        this.$message.info('操作取消.')
+      }
     },
     getPortConfig: async function () {
       try {
@@ -621,36 +723,14 @@ export default {
         // console.log(e)
       }
     },
-    confirmProtocol: async function () {
-      let inter = {
-        portName: this.protocolFormData.portName,
-        feature: this.protocolFormData.feature,
-        responseTimeout: this.protocolFormData.responseTimeout,
-        delayPoll: this.protocolFormData.delayPoll
+    modifyPortConfig: async function (inter) {
+      try {
+        await this.$http.put('/gather/usart', inter)
+        this.$message.success('配置成功!')
+      } catch (e) {
+        this.$message.error('配置失败')
       }
-
-      if (this.isEthernet) {
-        inter.ipAddress =
-          this.protocolFormData.ipAddress + ':' + this.protocolFormData.ipPort
-        delete inter['portName']
-        try {
-          await this.$http.post('/gather/ethernet', inter)
-          this.$message.success('添加成功!')
-        } catch (e) {
-          this.$message.error('添加失败')
-        }
-        this.getEthernetConfig()
-      } else {
-        try {
-          await this.$http.put('/gather/usart', inter)
-          this.$message.success('配置成功!')
-        } catch (e) {
-          this.$message.error('配置失败')
-        }
-        this.getPortConfig()
-      }
-      this.getNodes()
-      this.protocolDialogVisible = false
+      this.getPortConfig()
     },
     getEthernetConfig: async function () {
       try {
@@ -660,7 +740,14 @@ export default {
         // console.log(e)
       }
     },
-    addEthernetConfig: async function () {
+    addEthernetConfig: async function (inter) {
+      try {
+        await this.$http.post('/gather/ethernet', inter)
+        this.$message.success('添加成功!')
+      } catch (e) {
+        this.$message.error('添加失败')
+      }
+      this.getEthernetConfig()
     },
     deleteEthernetConfig: async function (id) {
       if (id === 0) {
