@@ -58,7 +58,7 @@ export default {
         return
       }
       try {
-        await this.$http.post('/syscfg/clearLogs')
+        await this.$http.delete('/logs')
         this.logForm.logs = ''
         this.$message.success('删除成功')
       } catch (e) {
