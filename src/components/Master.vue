@@ -678,7 +678,7 @@ export default {
       }
 
       try {
-        await this.$messageBox.confirm('是否确定删除所有节点?',
+        await this.$confirm('是否确定删除所有节点?',
           '警告',
           { type: 'warning' }
         )
@@ -700,7 +700,7 @@ export default {
       }
 
       try {
-        await this.$messageBox.confirm('是否确定删除所有节点?',
+        await this.$confirm('是否确定删除所有节点?',
           '警告',
           { type: 'warning' }
         )

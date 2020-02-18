@@ -181,7 +181,7 @@ export default {
         return
       }
       try {
-        await this.$messageBox.confirm(
+        await this.$confirm(
           '此操作将删除从机节点,是否确认?',
           '删除从机节点',
           { type: 'warning' }
@@ -196,6 +196,7 @@ export default {
           this.$message.error('删除失败!')
         }
       } catch (e) {
+        // console.log(e)
         this.$message.info('操作取消!')
       }
     }

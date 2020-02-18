@@ -213,7 +213,7 @@ export default {
   methods: {
     rebootAction: async function (message, url) {
       try {
-        await this.$messageBox.confirm(message, '警告', {
+        await this.$confirm(message, '警告', {
           type: 'warning',
           center: true
         })
@@ -236,7 +236,7 @@ export default {
     },
     factory: async function () {
       try {
-        await this.$messageBox.confirm(
+        await this.$confirm(
           '恢复出厂设置操作,将清除所有数据,并将IP与密码将会恢复至默认? - IP地址重启生效!!!',
           '警告',
           { type: 'warning', center: true }
@@ -317,7 +317,7 @@ export default {
         return
       }
       try {
-        await this.$messageBox.confirm(
+        await this.$confirm(
           '是否确定取消认证?',
           '警告',
           { type: 'warning', center: true }
