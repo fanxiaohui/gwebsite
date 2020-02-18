@@ -1,19 +1,11 @@
 <template>
   <el-container class="home_container">
-    <el-header class="home_header">
-      <div>
-        <img src="../assets/logo.png" alt="logo">
-        <span>欢迎使用网关</span>
-      </div>
-      <el-button type="info" icon="el-icon-thumb" @click="logout">退出</el-button>
-    </el-header>
-    <el-container>
       <el-aside :width="isCollapse?'65px':'180px'" class="home_aside">
-        <i class="el-icon-c-scale-to-original collapse_toggle" @click="toggleCollapse"/>
         <el-menu class="aside_menu" text-color="#fff" background-color="#545c64"
                  active-text-color="#ffd04b" router unique-opened
                  :collapse-transition="false" :collapse="isCollapse"
                  :default-active="activePath">
+          <h5>默认颜色</h5>
           <el-menu-item index="/sysinfo" @click="setNavState('/sysinfo')">
             <i class="el-icon-info"/><span slot="title">系统信息</span>
           </el-menu-item>
@@ -51,6 +43,16 @@
           </el-menu-item>
         </el-menu>
       </el-aside>
+    <el-container>
+      <el-header class="home_header">
+        <div>
+          <i :class="isCollapse?'el-icon-s-unfold':'el-icon-s-fold'"
+             @click="toggleCollapse"/>
+          <img src="../assets/logo.png" alt="logo">
+          <span>欢迎使用网关</span>
+        </div>
+        <el-button type="info" icon="el-icon-thumb" @click="logout">退出</el-button>
+      </el-header>
       <el-main class="home_main">
         <router-view/>
       </el-main>
@@ -65,7 +67,7 @@ export default {
     return {
       isCollapse: false,
       ports: [],
-      activePath: ''
+      activePath: '/'
     }
   },
   methods: {
@@ -92,13 +94,8 @@ export default {
   },
   created() {
     this.getPortsList()
-    this.activePath = window.sessionStorage.getItem('activePath')
-    this.isCollapse = document.documentElement.clientWidth <= 768 ? true : this.isCollapse
-    // 定义窗口变化通知事件
-    var _this = this
-    window.onresize = function () {
-      _this.isCollapse = document.documentElement.clientWidth <= 768 ? true : _this.isCollapse
-    }
+    let active = window.sessionStorage.getItem('activePath')
+    this.activePath = active === null ? '/' : active
   }
 }
 </script>
@@ -119,12 +116,13 @@ export default {
     > div {
       display: flex;
       align-items: center;
-
+      > i{
+        padding-right: 20px;
+      }
       > img {
         width: 60px;
         height: 60px;
       }
-
       > span {
         padding-left: 20px;
       }
@@ -133,14 +131,6 @@ export default {
 
   .home_aside {
     background-color: #545c64;
-
-    .collapse_toggle {
-      font-size: 24px;
-      display: flex;
-      justify-content: center;
-      cursor: pointer;
-    }
-
     .aside_menu {
       border-right: 0;
     }
