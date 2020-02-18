@@ -1,9 +1,8 @@
 import Vue from 'vue'
 import App from '@/App.vue'
 import router from '@/router'
-// plugin
-import '@/plugins/element.js'
 import axios from 'axios'
+import elementUI from 'element-ui'
 
 // icon
 // import fontawesomeCore from '@fortawesome/fontawesome-svg-core'
@@ -17,6 +16,7 @@ import axios from 'axios'
 import '@/assets/css/global.css'
 
 Vue.config.productionTip = false
+Vue.use(elementUI)
 
 axios.defaults.baseURL = 'http://127.0.0.1/api'
 // axios.defaults.baseURL = '/api'
@@ -25,7 +25,7 @@ axios.interceptors.request.use(config => {
   return config
 })
 axios.interceptors.response.use(response => {
-  console.log(response)
+  // console.log(response)
   return response
 }, error => {
   if (error && error.response.status === 401) {

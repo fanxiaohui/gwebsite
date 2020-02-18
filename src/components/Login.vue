@@ -1,11 +1,11 @@
 <template>
-  <div class="container">
+  <div class="login-wrap">
     <div class="login_box">
       <div class="avatar_box">
         <img src="../assets/logo.png" alt="">
       </div>
       <el-form ref="loginFormRef" :model="loginFromData" :rules="loginFromRules"
-               label-width="60px" class="form_input">
+               label-width="60px" class="login_input">
         <el-form-item label="账号" prop="username">
           <el-input v-model="loginFromData.username" placeholder="请输入账号"
                     disabled prefix-icon="el-icon-user-solid"/>
@@ -15,10 +15,11 @@
                     show-password prefix-icon="el-icon-lock"
                     @keyup.enter.native="login"/>
         </el-form-item>
-        <el-form-item class="form_btns">
+        <el-form-item class="login_btns">
           <el-button type="primary" round @click="login">登录</el-button>
           <el-button type="info" round @click="resetLoginInfo">重置</el-button>
         </el-form-item>
+<!--        <p class="login_tips">Tips : 用户名和密码随便填。</p>-->
       </el-form>
     </div>
   </div>
@@ -61,7 +62,7 @@ export default {
           window.sessionStorage.setItem('token', result.data.token)
           this.$message.success('登录成功!')
           let activePath = window.sessionStorage.getItem('activePath')
-          this.$router.push(activePath === '' ? '/home' : activePath)
+          this.$router.push(activePath === null ? '/' : activePath)
         } catch (e) {
           this.$message.error('登录失败!')
         }
@@ -72,15 +73,18 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  .container {
-    background: #2b4b6b;
+  .login-wrap {
+    position: relative;
+    width: 100%;
     height: 100%;
+    background-image: url('../assets/img/login-bg.jpg');
+    background-size: 100%;
   }
 
   .login_box {
     width: 450px;
     height: 300px;
-    background: #fffff7;
+    background: rgba(255, 255, 255, 0.3);
     border-radius: 10px;
     // 定位到中间
     position: absolute;
@@ -91,7 +95,6 @@ export default {
     .avatar_box {
       width: 150px;
       height: 150px;
-      background: #fff;
       border: 1px solid #eee;
       border-radius: 50%;
       padding: 10px;
@@ -109,18 +112,22 @@ export default {
       }
     }
 
-    .form_input {
+    .login_input {
       position: absolute;
       bottom: 0;
       width: 100%;
       padding: 0 30px;
       box-sizing: border-box;
 
-      .form_btns {
+      .login_btns {
         display: flex;
         justify-content: flex-end;
       }
+      .login_tips {
+        font-size: 12px;
+        line-height: 30px;
+        color: #666;
+      }
     }
   }
-
 </style>
