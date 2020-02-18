@@ -5,7 +5,7 @@
                  active-text-color="#ffd04b" router unique-opened
                  :collapse-transition="false" :collapse="isCollapse"
                  :default-active="activePath">
-          <h5>默认颜色</h5>
+          <h2 class="clearfix"></h2>
           <el-menu-item index="/sysinfo" @click="setNavState('/sysinfo')">
             <i class="el-icon-info"/><span slot="title">系统信息</span>
           </el-menu-item>
@@ -133,6 +133,11 @@ export default {
     background-color: #545c64;
     .aside_menu {
       border-right: 0;
+
+      /*.menu_header{*/
+      /*  text-align: center;*/
+      /*  font-style: normal;*/
+      /*}*/
     }
   }
 
