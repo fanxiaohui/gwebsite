@@ -49,7 +49,7 @@
           <i :class="isCollapse?'el-icon-s-unfold':'el-icon-s-fold'"
              @click="toggleCollapse"/>
           <img src="../assets/logo.png" alt="logo">
-          <span>欢迎使用网关</span>
+          <span>欢迎使用智能网关</span>
         </div>
         <el-button type="info" icon="el-icon-thumb" @click="logout">退出</el-button>
       </el-header>

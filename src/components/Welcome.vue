@@ -3,7 +3,7 @@
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item>首页</el-breadcrumb-item>
     </el-breadcrumb>
-    <strong>Welcome</strong>
+    <strong>欢迎使用智能网关</strong>
   </div>
 </template>
 
