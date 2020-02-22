@@ -336,10 +336,9 @@ export default {
       this.$message.info('当前限制选择1个文件!!!')
     },
     uploadChange: function (file) {
-      let filename = file.name
-      let fileExt = /[.]/.exec(filename)
-        ? /[^.]+$/.exec(filename.toLowerCase())
-        : ''
+      const filename = file.name
+      const fileExt = /[.]/.exec(filename)
+        ? /[^.]+$/.exec(filename.toLowerCase()) : ''
       // 仅支持bz2压缩
       if (fileExt[0] !== 'bz2') {
         this.$message.error('文件类型只支持bz2,请重新选择')
@@ -378,8 +377,8 @@ export default {
       }
 
       function loadNext() {
-        let start = currentChunk * chunkSize
-        let end =
+        const start = currentChunk * chunkSize
+        const end =
           start + chunkSize >= fileRaw.size ? fileRaw.size : start + chunkSize
         // 注意这里的fileRaw,即原生file
         fileReader.readAsBinaryString(blobSlice.call(fileRaw, start, end))
