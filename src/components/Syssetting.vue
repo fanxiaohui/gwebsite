@@ -193,6 +193,7 @@ export default {
       exceedData: {
         md5: ''
       },
+      uploadUrl: this.$http.defaults.baseURL + '/upgrade',
       isUpload: false,
       upgradeRate: 0
     }
@@ -205,9 +206,6 @@ export default {
       return {
         Authorization: 'BEARER ' + window.sessionStorage.getItem('token')
       }
-    },
-    uploadUrl: function () {
-      return this.$http.defaults.baseURL + '/upgrade'
     }
   },
   methods: {
@@ -354,8 +352,7 @@ export default {
 
       var upthis = this
       var fileRaw = file.raw
-      var blobSlice =
-        File.prototype.mozSlice ||
+      var blobSlice = File.prototype.mozSlice ||
         File.prototype.webkitSlice ||
         File.prototype.slice
       var chunkSize = 2 * 1024 * 1024
