@@ -1,4 +1,3 @@
 module.exports = {
-  productionSourceMap: false,
-  assetsDir: 'static'
+  productionSourceMap: false
 }

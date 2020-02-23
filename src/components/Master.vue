@@ -666,7 +666,7 @@ export default {
       try {
         await this.$http.put('/gather/modbus/nodes', this.editNodeFormData)
       } catch (e) {
-        console.log(e)
+        // console.log(e)
       }
       this.getNodes()
       this.editNodeDialogVisible = false
