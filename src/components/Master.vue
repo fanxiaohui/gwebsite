@@ -527,8 +527,8 @@ export default {
       },
       editNodeFormData: {},
       queryInfo: {
-        pagenum: 1,
-        pagesize: 10
+        pageIndex: 1,
+        pageSize: 10
       },
       protocolDialogVisible: false,
       editNodeDialogVisible: false,
@@ -606,11 +606,11 @@ export default {
       this.editNodeDialogVisible = false
     },
     handleSizeChange(newSize) {
-      this.queryInfo.pagesize = newSize
+      this.queryInfo.pageSize = newSize
       this.getNodes()
     },
     handleCurrentChange(newPage) {
-      this.queryInfo.pagenum = newPage
+      this.queryInfo.pageIndex = newPage
       this.getNodes()
     },
     confirmProtocol: async function () {

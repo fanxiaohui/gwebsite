@@ -81,7 +81,7 @@ export default {
     getPortsList: async function () {
       try {
         const result = await this.$http.get('/usart/ports')
-        this.ports = result.data.portList
+        this.ports = result.data.list
       } catch (e) {
         // console.log(e)
       }

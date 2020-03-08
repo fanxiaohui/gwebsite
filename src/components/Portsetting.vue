@@ -78,7 +78,7 @@ export default {
       let isSuccess = true
       try {
         const result = await this.$http.get('/usart/config')
-        this.portsConfigs = result.data.portsList
+        this.portsConfigs = result.data.list
       } catch (e) {
         isSuccess = false
       }

@@ -10,7 +10,7 @@
       </div>
       <el-form ref="form" @submit.native.prevent>
         <el-form-item class="logs_area">
-          <el-input type="textarea" :autosize="{minRows:25,maxRows:25}"
+          <el-input id="logarea" type="textarea" :autosize="{minRows:25,maxRows:25}"
                     v-model="logForm.logs" readonly/>
         </el-form-item>
         <el-form-item>
@@ -68,6 +68,10 @@ export default {
   },
   created() {
     this.getLogs()
+  },
+  updated() {
+    const ele = document.getElementById('logarea')
+    ele.scrollTop = ele.scrollHeight
   }
 }
 </script>
