@@ -4,10 +4,10 @@ import Err404 from '@/components/404'
 import Login from '@/components/Login'
 import Home from '@/components/Home'
 import Sysinfo from '@/components/Sysinfo'
-import Netsetting from '@/components/Netsetting'
+import Network from '@/components/network/Network'
 import USARTConfig from '@/components/USARTConfig/USARTConfig'
-import Master from '@/components/Master'
-import Slave from '@/components/Slave'
+import Master from '@/components/master/Master'
+import Slave from '@/components/slave/Slave'
 import Syssetting from '@/components/Syssetting'
 import Syslog from '@/components/Syslog'
 import Welcome from '@/components/Welcome'
@@ -24,8 +24,8 @@ const routes = [
     children: [
       { path: '/welcome', component: Welcome },
       { path: '/sysinfo', component: Sysinfo },
-      { path: '/netsetting', component: Netsetting },
       { path: '/USARTConfig', component: USARTConfig },
+      { path: '/network', component: Network },
       { path: '/modbus/:portName', component: Master, props: true },
       { path: '/slave', component: Slave },
       { path: '/syssetting', component: Syssetting },

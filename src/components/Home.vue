@@ -9,7 +9,7 @@
           <el-menu-item index="/sysinfo" @click="setNavState('/sysinfo')">
             <i class="el-icon-info"/><span slot="title">系统信息</span>
           </el-menu-item>
-          <el-menu-item index="/netsetting" @click="setNavState('/netsetting')">
+          <el-menu-item index="/network" @click="setNavState('/network')">
             <i class="el-icon-connection"/><span slot="title">网络设置</span>
           </el-menu-item>
           <el-menu-item index="/USARTConfig" @click="setNavState('/USARTConfig')">
