@@ -53,58 +53,23 @@
                   </el-select>
                 </template>
               </el-table-column>
+              <el-table-column prop="timeout" label="读写超时时间">
+                <template slot-scope="scope">
+                  <el-input type="number" v-model.number="scope.row.timeout"></el-input>
+                </template>
+              </el-table-column>
             </el-table>
           </template>
           <div class="action_btns">
             <el-button type="success" round @click="refresh">刷新</el-button>
-            <el-button type="primary" round @click="saveUsartConfig">保存</el-button>
+            <el-button type="primary" round @click="save">保存</el-button>
           </div>
         </el-col>
       </el-row>
     </el-card>
   </div>
 </template>
-
-<script>
-export default {
-  name: 'Portsetting',
-  data: function () {
-    return {
-      portsConfigs: []
-    }
-  },
-  methods: {
-    getUsartConfig: async function () {
-      let isSuccess = true
-      try {
-        const result = await this.$http.get('/usart/config')
-        this.portsConfigs = result.data.list
-      } catch (e) {
-        isSuccess = false
-      }
-      return isSuccess
-    },
-    saveUsartConfig: async function () {
-      try {
-        await this.$http.put('/usart/config', { portsList: this.portsConfigs })
-        this.getUsartConfig()
-        this.$message.success('保存成功')
-      } catch (e) {
-        this.$message.error('保存失败')
-      }
-    },
-    refresh: async function () {
-      await this.getUsartConfig()
-        ? this.$message.success('刷新成功')
-        : this.$message.error('刷新失败')
-    }
-  },
-  created() {
-    this.getUsartConfig()
-  }
-}
-</script>
-
+<script src="./index.js"></script>
 <style lang="less" scoped>
   .action_btns {
     padding-top: 20px;

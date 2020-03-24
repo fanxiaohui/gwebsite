@@ -12,7 +12,7 @@
           <el-menu-item index="/netsetting" @click="setNavState('/netsetting')">
             <i class="el-icon-connection"/><span slot="title">网络设置</span>
           </el-menu-item>
-          <el-menu-item index="/portsetting" @click="setNavState('/portsetting')">
+          <el-menu-item index="/USARTConfig" @click="setNavState('/USARTConfig')">
             <i class="el-icon-news"/><span slot="title">串口设置</span>
           </el-menu-item>
           <!--  主站模式 start-->

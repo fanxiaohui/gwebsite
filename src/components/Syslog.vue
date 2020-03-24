@@ -15,7 +15,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" round @click="refresh">刷新</el-button>
-          <el-button type="danger" round @click="deleteLogs">删除</el-button>
+          <el-button type="danger" round @click="clear">删除</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -33,7 +33,7 @@ export default {
     }
   },
   methods: {
-    getLogs: async function () {
+    get: async function () {
       let isSuccess = true
 
       try {
@@ -48,11 +48,11 @@ export default {
       return isSuccess
     },
     refresh: async function () {
-      await this.getLogs()
+      await this.get()
         ? this.$message.success('刷新成功')
         : this.$message.error('刷新失败')
     },
-    deleteLogs: async function () {
+    clear: async function () {
       if (this.logForm.logs.length === 0) {
         this.$message.info('没有什么可以删除的了!')
         return
@@ -67,7 +67,7 @@ export default {
     }
   },
   created() {
-    this.getLogs()
+    this.get()
   },
   updated() {
     const ele = document.getElementById('logarea')

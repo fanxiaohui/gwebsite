@@ -5,7 +5,7 @@ import Login from '@/components/Login'
 import Home from '@/components/Home'
 import Sysinfo from '@/components/Sysinfo'
 import Netsetting from '@/components/Netsetting'
-import Portsetting from '@/components/Portsetting'
+import USARTConfig from '@/components/USARTConfig/USARTConfig'
 import Master from '@/components/Master'
 import Slave from '@/components/Slave'
 import Syssetting from '@/components/Syssetting'
@@ -25,7 +25,7 @@ const routes = [
       { path: '/welcome', component: Welcome },
       { path: '/sysinfo', component: Sysinfo },
       { path: '/netsetting', component: Netsetting },
-      { path: '/portsetting', component: Portsetting },
+      { path: '/USARTConfig', component: USARTConfig },
       { path: '/modbus/:portName', component: Master, props: true },
       { path: '/slave', component: Slave },
       { path: '/syssetting', component: Syssetting },

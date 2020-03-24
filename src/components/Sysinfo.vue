@@ -149,7 +149,7 @@ export default {
     }
   },
   methods: {
-    getSystemInfo: async function () {
+    get: async function () {
       try {
         const result = await this.$http.get('/system/info')
         this.sysInfo = result.data.sysInfo
@@ -161,7 +161,7 @@ export default {
     }
   },
   created() {
-    this.getSystemInfo()
+    this.get()
   }
 }
 </script>
