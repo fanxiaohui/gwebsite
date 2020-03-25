@@ -21,7 +21,7 @@ Vue.use(elementUI)
 axios.defaults.baseURL = 'http://127.0.0.1/api'
 // axios.defaults.baseURL = '/api'
 axios.interceptors.request.use(config => {
-  config.headers.Authorization = 'BEARER ' + window.sessionStorage.getItem('token')
+  config.headers.Authorization = 'Bearer ' + window.sessionStorage.getItem('token')
   return config
 })
 axios.interceptors.response.use(response => {
