@@ -26,7 +26,7 @@ const routes = [
       { path: '/sysinfo', component: Sysinfo },
       { path: '/USARTConfig', component: USARTConfig },
       { path: '/network', component: Network },
-      { path: '/modbus/:portName', component: Master, props: true },
+      { path: '/modbus/*', component: Master, props: true },
       { path: '/slave', component: Slave },
       { path: '/syssetting', component: Syssetting },
       { path: '/syslog', component: Syslog }

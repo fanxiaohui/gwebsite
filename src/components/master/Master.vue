@@ -13,7 +13,7 @@
         <el-collapse-item title="以太网==>从站IP">
           <el-table :data="IPList" border>
             <el-table-column prop="feature" label="协议" width="100px" align="center"/>
-            <el-table-column prop="ipAddress" label="从站地址" align="center"/>
+            <el-table-column prop="address" label="从站地址" align="center"/>
             <el-table-column prop="delayPoll" label="延时时间" align="center"/>
             <el-table-column prop="responseTimeout" label="回复超时" align="center"/>
             <el-table-column label="配置" width="200px" align="center">
@@ -31,20 +31,20 @@
         </el-collapse-item>
       </el-collapse>
       <!--  串口协议的配置  -->
-      <el-form v-show="!isEthernet &&!isAny" :model="usartProtocolData" label-position="left"
+      <el-form v-show="!isEthernet &&!isAny" :model="USARTProtocolData" label-position="left"
                inline>
         <el-form-item label="接口:">
-          <el-input :value="usartProtocolData.portName" class="showProtoWidth" disabled/>
+          <el-input :value="USARTProtocolData.address" class="showProtoWidth" disabled/>
         </el-form-item>
         <el-form-item label="协议类型:">
           <el-input
-            v-if="usartProtocolData.feature==='mbrtu'"
+            v-if="USARTProtocolData.feature==='mbrtu'"
             value="MODBUS-RTU"
             class="showProtoWidth"
             disabled
           />
           <el-input
-            v-else-if="usartProtocolData.feature==='mbascii'"
+            v-else-if="USARTProtocolData.feature==='mbascii'"
             value="MODBUS-ASCII"
             class="showProtoWidth"
             disabled
@@ -52,10 +52,10 @@
           <el-input v-else value="None" class="showProtoWidth" disabled/>
         </el-form-item>
         <el-form-item label="命令延时(ms):">
-          <el-input :value="usartProtocolData.delayPoll" class="showProtoWidth" disabled/>
+          <el-input :value="USARTProtocolData.delayPoll" class="showProtoWidth" disabled/>
         </el-form-item>
         <el-form-item label="回复超时(ms):">
-          <el-input :value="usartProtocolData.responseTimeout" class="showProtoWidth" disabled/>
+          <el-input :value="USARTProtocolData.responseTimeout" class="showProtoWidth" disabled/>
         </el-form-item>
         <el-form-item>
           <el-button type="warning" round @click="showProtocolDialog">配置</el-button>
@@ -63,11 +63,10 @@
       </el-form>
       <!-- 从站列表 -->
       <el-table :data="nodesList" border class="node_table">
-        <el-table-column prop="portName" label="接口" width="80px" align="center"/>
+        <el-table-column prop="interfaces" label="接口" width="80px" align="center"/>
         <el-table-column
-          v-if="isEthernet || isAny"
-          prop="ipAddress"
-          label="从站IP"
+          prop="address"
+          label="地址"
           width="200px"
           align="center"
         />
@@ -146,8 +145,8 @@
             </el-select>
           </template>
         </el-form-item>
-        <el-form-item v-if="isEthernet" label="IP地址:" prop="ipAddress">
-          <el-input v-model="protocolFormData.ipAddress" class="interWidth"/>
+        <el-form-item  label="地址:" prop="address">
+          <el-input v-model="protocolFormData.address" class="interWidth"/>
         </el-form-item>
         <el-form-item v-if="isEthernet" label="IP端口:" prop="ipPort">
           <el-input type="number" v-model.number="protocolFormData.ipPort" class="interWidth"/>
@@ -177,18 +176,22 @@
                    label-width="100px" class="gather_box">
             <el-col :span="24">
               <el-form-item label="接口:">
-                <el-input :value="protocolFormData.portName"
+                <el-input :value="protocolFormData.interfaces"
                           class="interWidth" disabled/>
               </el-form-item>
               <div v-if="isEthernet">
-                <el-form-item v-show="isEthernet" label="从站IP:">
-                  <el-select v-model="addNodeFormData.ipAddress" class="interWidth">
-                    <el-option v-for="item in IPList" :key="item.ipAddress"
-                               :value="item.ipAddress"/>
+                <el-form-item label="从站IP:">
+                  <el-select v-model="addNodeFormData.address" class="interWidth">
+                    <el-option v-for="item in IPList" :key="item.address"
+                               :value="item.address"/>
                   </el-select>
                 </el-form-item>
               </div>
               <div v-else>
+                <el-form-item label="地址">
+                  <el-input :value="protocolFormData.address"
+                            class="interWidth" disabled/>
+                </el-form-item>
                 <el-form-item label="协议类型:">
                   <el-input v-if="protocolFormData.feature==='none'"
                             value="None" class="interWidth" disabled/>
@@ -324,11 +327,11 @@
                    label-width="100px" class="gather_box">
             <el-col :span="24">
               <el-form-item label="接口:">
-                <el-input :value="editNodeFormData.portName"
+                <el-input :value="editNodeFormData.interfaces"
                           class="interWidth" disabled/>
               </el-form-item>
-              <el-form-item v-show="editNodeFormData.portName==='Ethernet'" label="从站IP:">
-                <el-input :value="editNodeFormData.ipAddress"
+              <el-form-item label="地址:">
+                <el-input :value="editNodeFormData.address"
                           class="interWidth" disabled/>
               </el-form-item>
               <el-form-item label="从机地址:" prop="slaveId">

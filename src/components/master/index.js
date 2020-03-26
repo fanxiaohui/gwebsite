@@ -1,29 +1,33 @@
+function escape(str) {
+  return str.replace(/\//g, '%2F')
+}
+
 export default {
-  name: 'master',
+  name: 'Master',
   data: function () {
     return {
-      portName: 'Any',
+      current: 'Any',
       nodesList: [], // 节点列表
-      nodesTotal: 0, // 节眯总数
+      nodesTotal: 0, // 节点总数
       IPList: [], // 当前IP列表,仅Ethernet有效
-      usartProtocolData: { // 当前串口配置,仅usart有效
-        portName: 'Port1',
+      USARTProtocolData: { // 当前串口配置,仅usart有效
+        address: '',
         feature: 'none',
         delayPoll: 0,
         responseTimeout: 1000
       },
-      protocolFormData: {
-        portName: 'Port1',
+      protocolFormData: { // 协议配置
+        interfaces: 'Ethernet',
+        address: '',
         feature: 'none',
-        ipAddress: '192.168.1.2', // ethernet有效
-        ipPort: 502, // ethernet有效
         delayPoll: 0,
-        responseTimeout: 1000
+        responseTimeout: 1000,
+        ipPort: 502 // 仅Ethernet有效
       },
       addNodeFormData: {
-        portName: this.portName,
+        interfaces: '', // Ethernet 或 USART
         slaveId: 1,
-        ipAddress: '',
+        address: '', // ip 或 串口地址
         hasCoil: true,
         coilAddress: 0,
         coilQuantity: 10,
@@ -43,7 +47,7 @@ export default {
       },
       editNodeFormData: {},
       queryInfo: {
-        portName: '',
+        interfaces: '', // Ethernet 或 串口名
         pageIndex: 1,
         pageSize: 10
       },
@@ -55,10 +59,10 @@ export default {
   },
   computed: {
     isEthernet: function () {
-      return this.portName === 'Ethernet'
+      return this.current === 'Ethernet'
     },
     isAny: function () {
-      return this.portName === 'Any'
+      return this.current === 'Any'
     }
   },
   watch: {
@@ -68,26 +72,28 @@ export default {
   },
   methods: {
     tabPath: function () {
-      return this.isAny ? '所有从站' : (this.isEthernet ? '以太网' : this.portName)
+      return this.isAny ? '所有从站' : (this.isEthernet ? '以太网' : '串口')
     },
     init: function () {
-      this.portName = this.$route.params.portName
-      if (this.portName === 'Ethernet') {
+      this.current = this.$route.params.pathMatch
+      if (this.current === 'Ethernet') {
         this.getEthernetConfig()
-      } else if (this.portName !== 'Any') {
+      } else if (this.current !== 'Any') {
         this.getUSARTConfig()
       }
       this.getNodes()
     },
     showProtocolDialog: function () {
       if (this.isEthernet) {
-        this.protocolFormData.portName = 'Ethernet'
+        this.protocolFormData.interfaces = 'Ethernet'
+        this.protocolFormData.address = ''
         this.protocolFormData.feature = 'mbtcp'
       } else {
-        this.protocolFormData.portName = this.usartProtocolData.portName
-        this.protocolFormData.feature = this.usartProtocolData.feature
-        this.protocolFormData.delayPoll = this.usartProtocolData.delayPoll
-        this.protocolFormData.responseTimeout = this.usartProtocolData.responseTimeout
+        this.protocolFormData.interfaces = 'USART'
+        this.protocolFormData.address = this.USARTProtocolData.address
+        this.protocolFormData.feature = this.USARTProtocolData.feature
+        this.protocolFormData.delayPoll = this.USARTProtocolData.delayPoll
+        this.protocolFormData.responseTimeout = this.USARTProtocolData.responseTimeout
       }
       this.protocolDialogVisible = true
     },
@@ -97,19 +103,24 @@ export default {
     showAddNodeDialog: function () {
       if (this.isAny) {
         return
-      } else if (this.isEthernet) {
-        this.protocolFormData.portName = 'Ethernet'
-        this.addNodeFormData.ipAddress = ''
-      } else if (this.usartProtocolData.feature === 'none') {
-        this.$message.error('未使能相关协议!!! 请先配置!')
-        return
-      } else {
-        this.protocolFormData.portName = this.usartProtocolData.portName
-        this.protocolFormData.feature = this.usartProtocolData.feature
-        this.protocolFormData.delayPoll = this.usartProtocolData.delayPoll
-        this.protocolFormData.responseTimeout = this.usartProtocolData.responseTimeout
       }
-      this.addNodeFormData.portName = this.portName
+      if (this.isEthernet) {
+        this.addNodeFormData.interfaces = 'Ethernet'
+        this.addNodeFormData.address = ''
+        this.protocolFormData.interfaces = 'Ethernet'
+      } else {
+        if (this.USARTProtocolData.feature === 'none') {
+          this.$message.error('未使能相关协议!!! 请先配置!')
+          return
+        }
+        this.addNodeFormData.interfaces = 'USART'
+        this.addNodeFormData.address = this.current
+        this.protocolFormData.interfaces = 'USART'
+        this.protocolFormData.address = this.USARTProtocolData.address
+        this.protocolFormData.feature = this.USARTProtocolData.feature
+        this.protocolFormData.delayPoll = this.USARTProtocolData.delayPoll
+        this.protocolFormData.responseTimeout = this.USARTProtocolData.responseTimeout
+      }
       this.addNodeDialogVisible = true
     },
     hideAddNodeDialog: function () {
@@ -138,18 +149,17 @@ export default {
       }
 
       if (this.isEthernet) {
-        inter.ipAddress = this.protocolFormData.ipAddress +
-          ':' + this.protocolFormData.ipPort
+        inter.address = this.protocolFormData.address + ':' + this.protocolFormData.ipPort
         await this.addEthernetConfig(inter)
       } else {
-        inter.portName = this.protocolFormData.portName
+        inter.address = this.current
         await this.updateUSARTConfig(inter)
       }
       this.getNodes()
       this.protocolDialogVisible = false
     },
     getNodes: async function () {
-      this.queryInfo.portName = this.portName !== 'Any' ? (this.portName) : ''
+      this.queryInfo.interfaces = this.current !== 'Any' ? (this.current) : ''
       try {
         const result = await this.$http.get('/modbus/nodes', {
           params: this.queryInfo
@@ -161,14 +171,16 @@ export default {
       }
     },
     addNode: async function () {
-      if (this.isEthernet && this.addNodeFormData.ipAddress === '') {
+      if (this.isEthernet && this.addNodeFormData.address === '') {
         this.$message.warning('请选择对应的从站ip地址!')
         return
       }
       try {
         await this.$http.post('/modbus/nodes', this.addNodeFormData)
         this.getNodes()
+        this.$message.success('添加成功')
       } catch (e) {
+        this.$message.warning('添加失败')
         // console.log(e)
       }
       this.addNodeDialogVisible = false
@@ -201,7 +213,7 @@ export default {
         )
         try {
           await this.$http.delete('/modbus/nodes' +
-            (this.isAny ? '' : ('/type/' + this.portName)))
+            (this.isAny ? '' : ('/type/' + escape(this.current))))
           this.$message.success('删除成功!')
         } catch (e) {
           this.$message.error('删除失败!')
@@ -234,16 +246,16 @@ export default {
     },
     getUSARTConfig: async function () {
       try {
-        const result = await this.$http.get('/modbus/usart/' + this.portName)
-        this.usartProtocolData = result.data
+        const result = await this.$http.get('/modbus/usart/' +
+          escape(this.current))
+        this.USARTProtocolData = result.data
       } catch (e) {
         // console.log(e)
       }
     },
     updateUSARTConfig: async function (inter) {
       try {
-        await this.$http.put('/modbus/usart/' +
-          inter.portName, inter)
+        await this.$http.put('/modbus/usart', inter)
         this.$message.success('配置成功!')
       } catch (e) {
         this.$message.error('配置失败')
