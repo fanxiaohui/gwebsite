@@ -85,7 +85,7 @@
   </div>
 </template>
 
-<script src="./index.js"></script>
+<script src="./slave.js"></script>
 
 <style lang="less" scoped>
 .action_btns {
