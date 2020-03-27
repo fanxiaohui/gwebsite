@@ -15,6 +15,7 @@ export default {
         stopBits: 1,
         timeout: 1000
       },
+      portAddress: [],
       addDialogVisible: false
     }
   },
@@ -24,6 +25,10 @@ export default {
     },
     hideAddDialog: function () {
       this.addDialogVisible = false
+    },
+    getAddress: async function () {
+      const result = await this.$http.get('/system/usart')
+      this.portAddress = result.data.list
     },
     get: async function () {
       const result = await this.$http.get('/usart/config')
@@ -40,7 +45,6 @@ export default {
       this.addDialogVisible = false
     },
     save: async function (port) {
-      console.log(port)
       try {
         await this.$http.put('/usart/config', port)
         await this.get()
@@ -77,5 +81,6 @@ export default {
   },
   created() {
     this.get()
+    this.getAddress()
   }
 }

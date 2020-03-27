@@ -76,7 +76,9 @@
       <el-dialog title="增加串口配置" :visible.sync="addDialogVisible" center width="400px">
         <el-form ref="addNodeFormRef" :model="port" label-width="100px">
           <el-form-item label="地址:">
-            <el-input v-model="port.address" class="interWidth"/>
+            <el-select v-model="port.address" class="interWidth">
+              <el-option v-for="addr in portAddress" :key="addr" :value="addr"/>
+            </el-select>
           </el-form-item>
           <el-form-item label="波特率:">
             <el-select v-model="port.baudRate" class="interWidth">
