@@ -5,7 +5,7 @@ export default {
       interFormData: {
         inter: 'mbtcp',
         port: 502,
-        bindInterface: 'Port1'
+        bindInterface: []
       },
       queryInfo: {
         pageIndex: 1,

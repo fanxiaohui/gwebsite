@@ -99,7 +99,6 @@
                 <span>重启设备-恢复出厂设置</span>
               </div>
               <el-button type="danger" round @click="reboot">重启网关</el-button>
-              <el-button type="danger" round @click="softReboot">重启软件</el-button>
               <el-tooltip class="item" effect="dark"
                           content="本操作 将清空所有数据并设置IP和密码为默认!!!" placement="top-start">
                 <el-button type="danger" round @click="factory">恢复出厂设置</el-button>
@@ -193,7 +192,7 @@ export default {
       exceedData: {
         md5: ''
       },
-      uploadUrl: this.$http.defaults.baseURL + '/upgrade',
+      uploadUrl: this.$http.defaults.baseURL + '/system/upgrade',
       isUpload: false,
       upgradeRate: 0
     }
@@ -209,14 +208,15 @@ export default {
     }
   },
   methods: {
-    rebootAction: async function (message, url) {
+
+    reboot: async function () {
       try {
-        await this.$confirm(message, '警告', {
+        await this.$confirm('确认重启网关?', '警告', {
           type: 'warning',
           center: true
         })
         try {
-          await this.$http.post(url)
+          await this.$http.post('/system/action/reboot')
           this.rebootProgress()
           this.$message.warning('重启中...')
         } catch (e) {
@@ -225,12 +225,6 @@ export default {
       } catch (e) {
         this.$message.info('取消操作')
       }
-    },
-    reboot: function () {
-      this.rebootAction('确认重启网关?', '/syscfg/reboot')
-    },
-    softReboot: function () {
-      this.rebootAction('确认重启软件?', '/syscfg/exec')
     },
     factory: async function () {
       try {
@@ -241,7 +235,7 @@ export default {
         )
         this.$message.warning('恢复出厂中...')
         try {
-          await this.$http.post('/syscfg/factoryReset')
+          await this.$http.post('/system/action/factory')
           this.$message.success('恢复出厂成功!')
         } catch (e) {
           this.$message.warning('恢复出厂失败!')

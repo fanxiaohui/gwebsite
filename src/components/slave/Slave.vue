@@ -10,8 +10,8 @@
       </div>
       <el-table :data="nodes">
         <el-table-column prop="inter" label="接口"/>
-        <el-table-column prop="port" label="端口" />
-        <el-table-column prop="bindInterface" label="绑定接口" />
+        <el-table-column prop="port" label="端口"/>
+        <el-table-column prop="bindInterface" label="绑定接口"/>
         <el-table-column>
           <template slot-scope="scope">
             <!--                <el-button @click="handleEdit(scope.row.id)">编辑</el-button>-->
@@ -45,17 +45,17 @@
         <el-form-item label="协议类型:" prop="username">
           <template>
             <el-select v-model="interFormData.inter" class="interWidth">
-              <el-option label="MODBUS-TCP" value="mbtcp" />
+              <el-option label="MODBUS-TCP" value="mbtcp"/>
             </el-select>
           </template>
         </el-form-item>
         <el-form-item label="服务端口:" prop="port">
-          <el-input type="number" v-model.number="interFormData.port" class="interWidth" />
+          <el-input type="number" v-model.number="interFormData.port" class="interWidth"/>
         </el-form-item>
-        <el-form-item label="绑定端口:" prop="bindPortName">
+        <el-form-item label="绑定接口口:" prop="bindInterface">
           <template>
             <el-select v-model="interFormData.bindInterface" class="interWidth">
-              <el-option v-for="item in bindInterList" :key="item" :value="item" />
+              <el-option v-for="item in bindInterList" :key="item" :value="item"/>
             </el-select>
           </template>
         </el-form-item>
@@ -76,10 +76,10 @@
           title="注意:"
           description="配置信息需重启才生效"
         />
-        <el-alert type="info" :closable="false" description="从站模式跟上位机通讯，是对主站的映射。" />
-        <el-alert type="info" :closable="false" title="接口：" description="协议及端口" />
-        <el-alert type="info" :closable="false" title="从站地址：" description="Modbus从站地址" />
-        <el-alert type="info" :closable="false" title="绑定接口：" description=" 绑定该接口用于转发该接口数据" />
+        <el-alert type="info" :closable="false" description="从站模式跟上位机通讯，是对主站的映射。"/>
+        <el-alert type="info" :closable="false" title="接口：" description="协议及端口"/>
+        <el-alert type="info" :closable="false" title="从站地址：" description="Modbus从站地址"/>
+        <el-alert type="info" :closable="false" title="绑定接口：" description=" 绑定该接口用于转发该接口数据"/>
       </div>
     </el-drawer>
   </div>
@@ -88,16 +88,16 @@
 <script src="./slave.js"></script>
 
 <style lang="less" scoped>
-.action_btns {
-  margin-top: 20px;
-}
+  .action_btns {
+    margin-top: 20px;
+  }
 
-.interWidth {
-  width: 200px;
-}
+  .interWidth {
+    width: 200px;
+  }
 
-.el-pagination {
-  margin-top: 15px;
-  text-align: center;
-}
+  .el-pagination {
+    margin-top: 15px;
+    text-align: center;
+  }
 </style>
