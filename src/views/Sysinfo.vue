@@ -138,10 +138,10 @@ export default {
   },
   computed: {
     runTime: function () {
-      let tmpSec = parseInt(this.origTime)// 秒
-      let second = tmpSec % 60
-      let minute = Math.floor(tmpSec / 60) % 60
-      let hour = Math.floor(tmpSec / 3600)
+      const tmpSec = parseInt(this.origTime)// 秒
+      const second = tmpSec % 60
+      const minute = Math.floor(tmpSec / 60) % 60
+      const hour = Math.floor(tmpSec / 3600)
 
       return ((hour > 0) ? (hour + '小时') : '') +
         (minute > 0 ? (minute + '分') : '') +

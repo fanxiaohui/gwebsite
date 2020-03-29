@@ -20,13 +20,14 @@ export default {
     }
   },
   methods: {
-    showAddDialog: function () {
+    showAddDialog: async function () {
+      await this.getSysUSART()
       this.addDialogVisible = true
     },
     hideAddDialog: function () {
       this.addDialogVisible = false
     },
-    getAddress: async function () {
+    getSysUSART: async function () {
       const result = await this.$http.get('/system/usart')
       this.portAddress = result.data.list
     },
@@ -81,6 +82,6 @@ export default {
   },
   created() {
     this.get()
-    this.getAddress()
+    this.getSysUSART()
   }
 }

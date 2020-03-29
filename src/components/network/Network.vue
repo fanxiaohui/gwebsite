@@ -46,7 +46,7 @@
 
 <script>
 export default {
-  name: 'network',
+  name: 'Network',
   data: function () {
     return {
       netForm: {},

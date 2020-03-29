@@ -19,7 +19,7 @@
           <el-button type="primary" round @click="login">登录</el-button>
           <el-button type="info" round @click="resetLoginInfo">重置</el-button>
         </el-form-item>
-<!--        <p class="login_tips">Tips : 用户名和密码随便填。</p>-->
+        <!--        <p class="login_tips">Tips : 用户名和密码随便填。</p>-->
       </el-form>
     </div>
   </div>
@@ -61,7 +61,7 @@ export default {
           const result = await this.$http.post('/login', this.loginFromData)
           window.sessionStorage.setItem('token', result.data.token)
           this.$message.success('登录成功!')
-          let activePath = window.sessionStorage.getItem('activePath')
+          const activePath = window.sessionStorage.getItem('activePath')
           this.$router.push(activePath === null ? '/' : activePath)
         } catch (e) {
           this.$message.error('登录失败!')
@@ -123,6 +123,7 @@ export default {
         display: flex;
         justify-content: flex-end;
       }
+
       .login_tips {
         font-size: 12px;
         line-height: 30px;
