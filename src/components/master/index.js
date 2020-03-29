@@ -142,7 +142,7 @@ export default {
       this.getNodes()
     },
     confirmProtocol: async function () {
-      let inter = {
+      const inter = {
         feature: this.protocolFormData.feature,
         responseTimeout: this.protocolFormData.responseTimeout,
         delayPoll: this.protocolFormData.delayPoll

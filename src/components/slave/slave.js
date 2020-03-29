@@ -94,7 +94,7 @@ export default {
           { type: 'warning' }
         )
         try {
-          let url = '/modbus/slaves' + (id !== 0 ? '/' + id : '')
+          const url = '/modbus/slaves' + (id !== 0 ? '/' + id : '')
           await this.$http.delete(url)
           this.getSlaves()
           this.$message.success('删除成功!')
